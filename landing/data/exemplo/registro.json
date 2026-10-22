@@ -1,0 +1,547 @@
+{
+ "gerado_em": "2026-10-22T16:29:56",
+ "sintetico": true,
+ "sklearn_versao": "1.9.1",
+ "ruido_piloto_s": 0.4275218045112723,
+ "alvos": {
+  "tempo_s": {
+   "descricao": "tempo de volta",
+   "unidade": "s",
+   "padrao": "tempo__random_forest"
+  },
+  "vel_max_kmh": {
+   "descricao": "velocidade máxima da volta",
+   "unidade": "km/h",
+   "padrao": "vel_max__lightgbm"
+  },
+  "vel_media_kmh": {
+   "descricao": "velocidade média da volta",
+   "unidade": "km/h",
+   "padrao": "vel_media__lasso"
+  }
+ },
+ "modelos": [
+  {
+   "id": "tempo__baseline_media",
+   "nome": "Dummy (média)",
+   "algoritmo": "baseline_media",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5508982842643123,
+    "rmse": 1.2354139802156079,
+    "r2": -0.42940337921894,
+    "mae_dp": 0.16584593278476148,
+    "rmse_dp": 0.47474216683982506,
+    "r2_dp": 0.7616512828017902
+   },
+   "metricas_teste": {
+    "mae": 0.5919456783656291,
+    "rmse": 1.554296550189673,
+    "r2": -0.021311333499298923
+   },
+   "hiperparametros": {
+    "strategy": "mean"
+   }
+  },
+  {
+   "id": "tempo__so_carro",
+   "nome": "Regressão linear só com o carro",
+   "algoritmo": "so_carro",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5328720774358856,
+    "rmse": 1.176246602118329,
+    "r2": -0.05878482628537065,
+    "mae_dp": 0.15584956908709546,
+    "rmse_dp": 0.519567817942317,
+    "r2_dp": 0.16551641485935567
+   },
+   "metricas_teste": {
+    "mae": 0.5810276442170941,
+    "rmse": 1.5374964929605426,
+    "r2": 0.0006476161011572668
+   },
+   "hiperparametros": {
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "tempo__lasso",
+   "nome": "Lasso",
+   "algoritmo": "lasso",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5508450998153532,
+    "rmse": 1.2081481837647172,
+    "r2": -0.17338315040199034,
+    "mae_dp": 0.16058419047799546,
+    "rmse_dp": 0.5084014266396073,
+    "r2_dp": 0.28727864988100543
+   },
+   "metricas_teste": {
+    "mae": 0.5523478747511149,
+    "rmse": 1.5372517193620276,
+    "r2": 0.0009657899748800602
+   },
+   "hiperparametros": {
+    "alpha": 0.07196856730011514,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "tempo__ridge",
+   "nome": "Ridge",
+   "algoritmo": "ridge",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5607364201090731,
+    "rmse": 1.2394450074725551,
+    "r2": -0.44687687279162464,
+    "mae_dp": 0.17207293023936715,
+    "rmse_dp": 0.4750027950850543,
+    "r2_dp": 0.7850782302835162
+   },
+   "metricas_teste": {
+    "mae": 0.5879143719801397,
+    "rmse": 1.5520678999532873,
+    "r2": -0.018384589690263686
+   },
+   "hiperparametros": {
+    "alpha": 1000.0,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "tempo__random_forest",
+   "nome": "Random Forest",
+   "algoritmo": "random_forest",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5158051826011935,
+    "rmse": 1.208055872078226,
+    "r2": -0.4924290831224772,
+    "mae_dp": 0.13323517690207556,
+    "rmse_dp": 0.4592547525792441,
+    "r2_dp": 1.0336949454031101
+   },
+   "metricas_teste": {
+    "mae": 0.5611837062861132,
+    "rmse": 1.5614039150639822,
+    "r2": -0.030673032983135506
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_features": 0.6,
+    "min_samples_leaf": 10
+   }
+  },
+  {
+   "id": "tempo__xgboost",
+   "nome": "XGBoost",
+   "algoritmo": "xgboost",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5899901314084272,
+    "rmse": 1.3163112614597554,
+    "r2": -1.6114643157513533,
+    "mae_dp": 0.11911136893953082,
+    "rmse_dp": 0.38301440329676695,
+    "r2_dp": 3.036199770849802
+   },
+   "metricas_teste": {
+    "mae": 0.5709895019531249,
+    "rmse": 1.5607345555920886,
+    "r2": -0.029789542330277863
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": 2,
+    "learning_rate": 0.03,
+    "min_child_weight": 5
+   }
+  },
+  {
+   "id": "tempo__lightgbm",
+   "nome": "LightGBM",
+   "algoritmo": "lightgbm",
+   "alvo": "tempo_s",
+   "unidade": "s",
+   "metricas_cv": {
+    "mae": 0.5684221219023362,
+    "rmse": 1.2636465705793296,
+    "r2": -1.2882782777353299,
+    "mae_dp": 0.12939154348298487,
+    "rmse_dp": 0.39195102124494663,
+    "r2_dp": 2.5573487692039905
+   },
+   "metricas_teste": {
+    "mae": 0.6265996464364659,
+    "rmse": 1.578512254695808,
+    "r2": -0.05338298944864084
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": -1,
+    "learning_rate": 0.03,
+    "min_child_weight": 0.001,
+    "num_leaves": 7,
+    "min_child_samples": 20
+   }
+  },
+  {
+   "id": "vel_max__baseline_media",
+   "nome": "Dummy (média)",
+   "algoritmo": "baseline_media",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 1.5609252327832084,
+    "rmse": 1.6772985590796736,
+    "r2": -2.1407359677753752,
+    "mae_dp": 0.1681868565013657,
+    "rmse_dp": 0.16442961439346576,
+    "r2_dp": 3.5117855521561907
+   },
+   "metricas_teste": {
+    "mae": 1.5147459402828862,
+    "rmse": 1.7398375252011757,
+    "r2": -0.07273885007548975
+   },
+   "hiperparametros": {
+    "strategy": "mean"
+   }
+  },
+  {
+   "id": "vel_max__so_carro",
+   "nome": "Regressão linear só com o carro",
+   "algoritmo": "so_carro",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.47018797900468545,
+    "rmse": 0.5982660129435724,
+    "r2": 0.6400851349729366,
+    "mae_dp": 0.02562924553430043,
+    "rmse_dp": 0.061164229841344904,
+    "r2_dp": 0.33912095290324207
+   },
+   "metricas_teste": {
+    "mae": 0.7725217391304424,
+    "rmse": 1.0841411748687129,
+    "r2": 0.5834680687801139
+   },
+   "hiperparametros": {
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_max__lasso",
+   "nome": "Lasso",
+   "algoritmo": "lasso",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.4621874250172602,
+    "rmse": 0.5874790199290133,
+    "r2": 0.6415304844351107,
+    "mae_dp": 0.03368061286009166,
+    "rmse_dp": 0.0631114920516779,
+    "r2_dp": 0.35993103695654016
+   },
+   "metricas_teste": {
+    "mae": 0.7671822346152003,
+    "rmse": 1.0726508450791545,
+    "r2": 0.5922505531152107
+   },
+   "hiperparametros": {
+    "alpha": 0.005179474679231213,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_max__ridge",
+   "nome": "Ridge",
+   "algoritmo": "ridge",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.4619321386247134,
+    "rmse": 0.5865349933673937,
+    "r2": 0.6416073683265197,
+    "mae_dp": 0.034188360878340346,
+    "rmse_dp": 0.06412451033840733,
+    "r2_dp": 0.36177527901867296
+   },
+   "metricas_teste": {
+    "mae": 0.7669713452476181,
+    "rmse": 1.0712988630043847,
+    "r2": 0.5932777699995625
+   },
+   "hiperparametros": {
+    "alpha": 0.3727593720314938,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_max__random_forest",
+   "nome": "Random Forest",
+   "algoritmo": "random_forest",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.46737470718368995,
+    "rmse": 0.5996475862211185,
+    "r2": 0.6208677139775302,
+    "mae_dp": 0.04773619445536458,
+    "rmse_dp": 0.07726071969928244,
+    "r2_dp": 0.3857472274629554
+   },
+   "metricas_teste": {
+    "mae": 0.7778157813030282,
+    "rmse": 1.0775637031303373,
+    "r2": 0.5885069255698185
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_features": 1.0,
+    "min_samples_leaf": 5
+   }
+  },
+  {
+   "id": "vel_max__xgboost",
+   "nome": "XGBoost",
+   "algoritmo": "xgboost",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.4643353751379345,
+    "rmse": 0.603223110517474,
+    "r2": 0.633125293884957,
+    "mae_dp": 0.05059125283968376,
+    "rmse_dp": 0.08101778550182606,
+    "r2_dp": 0.3457945798699684
+   },
+   "metricas_teste": {
+    "mae": 0.7702628757642663,
+    "rmse": 1.071017652217466,
+    "r2": 0.5934912672241077
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": 2,
+    "learning_rate": 0.03,
+    "min_child_weight": 1
+   }
+  },
+  {
+   "id": "vel_max__lightgbm",
+   "nome": "LightGBM",
+   "algoritmo": "lightgbm",
+   "alvo": "vel_max_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.4615015121481427,
+    "rmse": 0.5924313697892096,
+    "r2": 0.6349885087220668,
+    "mae_dp": 0.051918641761321487,
+    "rmse_dp": 0.08385608010042861,
+    "r2_dp": 0.36030031048983957
+   },
+   "metricas_teste": {
+    "mae": 0.7794852966798109,
+    "rmse": 1.0873578244982873,
+    "r2": 0.5809926994026102
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": -1,
+    "learning_rate": 0.03,
+    "min_child_weight": 0.001,
+    "num_leaves": 7,
+    "min_child_samples": 20
+   }
+  },
+  {
+   "id": "vel_media__baseline_media",
+   "nome": "Dummy (média)",
+   "algoritmo": "baseline_media",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.5203149196257708,
+    "rmse": 0.5883907222977303,
+    "r2": -1.5943610433185509,
+    "mae_dp": 0.12180833659267618,
+    "rmse_dp": 0.13094900971021295,
+    "r2_dp": 1.9656978435514552
+   },
+   "metricas_teste": {
+    "mae": 0.4988475641697243,
+    "rmse": 0.5939677432161823,
+    "r2": -0.20654281252663842
+   },
+   "hiperparametros": {
+    "strategy": "mean"
+   }
+  },
+  {
+   "id": "vel_media__so_carro",
+   "nome": "Regressão linear só com o carro",
+   "algoritmo": "so_carro",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.25090941691759644,
+    "rmse": 0.31866769202377754,
+    "r2": 0.27427323042032137,
+    "mae_dp": 0.07070634730634702,
+    "rmse_dp": 0.07409243686146724,
+    "r2_dp": 0.3749797415461661
+   },
+   "metricas_teste": {
+    "mae": 0.3036727605696164,
+    "rmse": 0.3871346358722231,
+    "r2": 0.4874442939016347
+   },
+   "hiperparametros": {
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_media__lasso",
+   "nome": "Lasso",
+   "algoritmo": "lasso",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.1865018720763605,
+    "rmse": 0.23864710851834695,
+    "r2": 0.6146989203748351,
+    "mae_dp": 0.06010392770853774,
+    "rmse_dp": 0.07557466225966059,
+    "r2_dp": 0.21112219582079375
+   },
+   "metricas_teste": {
+    "mae": 0.28706058796656403,
+    "rmse": 0.3645260383204894,
+    "r2": 0.5455625358632787
+   },
+   "hiperparametros": {
+    "alpha": 0.005179474679231213,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_media__ridge",
+   "nome": "Ridge",
+   "algoritmo": "ridge",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.1878793415953959,
+    "rmse": 0.2382510809292266,
+    "r2": 0.6161909597943064,
+    "mae_dp": 0.059762979186870194,
+    "rmse_dp": 0.07487424300992016,
+    "r2_dp": 0.20891465020366667
+   },
+   "metricas_teste": {
+    "mae": 0.28345201723991276,
+    "rmse": 0.3610039317982108,
+    "r2": 0.554301799882321
+   },
+   "hiperparametros": {
+    "alpha": 0.3727593720314938,
+    "fit_intercept": true
+   }
+  },
+  {
+   "id": "vel_media__random_forest",
+   "nome": "Random Forest",
+   "algoritmo": "random_forest",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.2083998188778465,
+    "rmse": 0.25283494315384103,
+    "r2": 0.5255387765871451,
+    "mae_dp": 0.07477595301220513,
+    "rmse_dp": 0.08423973158475419,
+    "r2_dp": 0.34178335150281886
+   },
+   "metricas_teste": {
+    "mae": 0.2995933684763701,
+    "rmse": 0.3725164262493674,
+    "r2": 0.5254217045870839
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_features": 0.6,
+    "min_samples_leaf": 2
+   }
+  },
+  {
+   "id": "vel_media__xgboost",
+   "nome": "XGBoost",
+   "algoritmo": "xgboost",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.18854841550144927,
+    "rmse": 0.22932986039142852,
+    "r2": 0.6146211961629104,
+    "mae_dp": 0.0640634193724687,
+    "rmse_dp": 0.07559074060524028,
+    "r2_dp": 0.2590957262118132
+   },
+   "metricas_teste": {
+    "mae": 0.2965623673148783,
+    "rmse": 0.367694409298913,
+    "r2": 0.5376284865485048
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": 2,
+    "learning_rate": 0.1,
+    "min_child_weight": 1
+   }
+  },
+  {
+   "id": "vel_media__lightgbm",
+   "nome": "LightGBM",
+   "algoritmo": "lightgbm",
+   "alvo": "vel_media_kmh",
+   "unidade": "km/h",
+   "metricas_cv": {
+    "mae": 0.21620660959208543,
+    "rmse": 0.2682153988422198,
+    "r2": 0.4864286651973573,
+    "mae_dp": 0.05231000806051225,
+    "rmse_dp": 0.06265506252154565,
+    "r2_dp": 0.24996920258917266
+   },
+   "metricas_teste": {
+    "mae": 0.30291488025710084,
+    "rmse": 0.3693884069870565,
+    "r2": 0.5333583071968859
+   },
+   "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": -1,
+    "learning_rate": 0.1,
+    "min_child_weight": 0.001,
+    "num_leaves": 7,
+    "min_child_samples": 20
+   }
+  }
+ ],
+ "padrao": "tempo__random_forest",
+ "exemplo": true,
+ "aviso": "EXEMPLO: modelos de TESTE treinados com dados SINTÉTICOS (dashboard/data/demo). Não são resultados do estudo."
+}

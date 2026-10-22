@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Engenheiro de Corrida Virtual · F1 23 Mônaco</title>
+<meta name="description" content="Estudo de Machine Learning: o que faz um carro vencer em Mônaco? Telemetria do F1 23, 11 setups, 2 carros, modelos e simulador.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,125,900&family=JetBrains+Mono:wght@400;600;700&family=Titillium+Web:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23E10600'/><text x='5' y='23' font-size='18' font-family='Arial' font-weight='900' fill='white'>EV</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+<script src="js/config.js" defer></script>
+<script src="js/app.js" defer></script>
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="#topo"><span class="logo-mark">EV</span><span>ENGENHEIRO<b>VIRTUAL</b></span></a>
+  <nav id="menu">
+    <a href="#experimento">Experimento</a><a href="#captura">Captura</a><a href="#telemetria">Telemetria</a>
+    <a href="#resultados">Resultados</a><a href="#videos">Vídeos</a><a href="#metodologia">Metodologia</a>
+    <a class="btn-nav" href="#simulador">Simulador</a>
+  </nav>
+  <button class="burger" aria-label="menu" onclick="document.body.classList.toggle('menu-on')"><i></i><i></i><i></i></button>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/onboard_poster.webp" aria-hidden="true">
+    <source src="assets/onboard.webm" type="video/webm"><source src="assets/onboard.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <svg class="hero-track" viewBox="0 0 800 500" aria-hidden="true"><path id="pistaHero" d=""/></svg>
+  <div class="hero-grid"></div>
+  <div class="wrap hero-in">
+    <p class="kicker"><span class="dot"></span> F1 23 · Circuito de Mônaco · Projeto de ML/DL · FECAF</p>
+    <h1 class="mega">O que faz um carro<br><em>vencer</em> em Mônaco?</h1>
+    <p class="lead">O piloto, o carro… ou dois cliques na asa traseira? Capturamos a telemetria do jogo, testamos 11 setups em 2 carros e treinamos modelos para responder com dados.</p>
+    <div class="cta"><a class="btn" href="#simulador">Testar o simulador →</a><a class="btn ghost" href="#telemetria">Ver a telemetria</a></div>
+    <div class="stats" id="heroStats">
+      <div class="stat"><b data-n="2">2</b><span>carros<br>Ferrari × Alfa Romeo</span></div>
+      <div class="stat"><b data-n="11">11</b><span>setups<br>S0 a S10</span></div>
+      <div class="stat"><b id="stVoltas">—</b><span>voltas<br>limpas</span></div>
+      <div class="stat"><b id="stAmostras">—</b><span>amostras de<br>telemetria</span></div>
+      <div class="stat"><b data-n="3.337">3,337</b><span>km por<br>volta</span></div>
+    </div>
+    <p class="fonte-dados" id="fonteDados">carregando dados…</p>
+  </div>
+  <p class="ia-label">◆ Vídeo e imagens: ilustrações geradas por IA · sem marcas oficiais</p>
+  <div class="hero-stripe"></div>
+</section>
+<div class="ticker" aria-label="dados ao vivo"><div class="ticker-in" id="ticker"><span>CARREGANDO TELEMETRIA…</span></div></div>
+
+<!-- EXPERIMENTO -->
+<section id="experimento" class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">01</span><div><p class="kicker">O experimento</p><h2 class="big">Um laboratório<br>de 3,3 km</h2></div></div>
+    <div class="grid-asym reveal">
+      <article class="card car teamcard ferrari" style="--team:#E10600;--team2:#ffd23f"><span class="car-no">01</span><img class="car-img" src="assets/carro_vermelho.webp" srcset="assets/carro_vermelho_640.webp 640w, assets/carro_vermelho.webp 1024w" sizes="(max-width:980px) 92vw, 34vw" alt="Ilustração gerada por IA de um carro de F1 genérico vermelho" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 1 · SESSÕES 1–2 · S10 → 5</p><h3>Ferrari</h3></div><p>Sessões 1–2 (e 5 para o S10). Mesmo piloto, mesmas condições: pista seca, Grande Prêmio &gt; Treino Livre.</p></article>
+      <article class="card car teamcard alfa" style="--team:#8B1E2D;--team2:#ffffff"><span class="car-no">09</span><img class="car-img" src="assets/carro_grena.webp" srcset="assets/carro_grena_640.webp 640w, assets/carro_grena.webp 1024w" sizes="(max-width:980px) 92vw, 34vw" alt="Ilustração gerada por IA de um carro de F1 genérico grená e branco" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 9 · SESSÕES 3–4 · S10 → 6</p><h3>Alfa Romeo</h3></div><p>Sessões 3–4 (e 6 para o S10). Desempenho real dos carros ligado, para o carro <em>importar</em>.</p></article>
+      <article class="card tall metodo">
+        <p class="tag">Desenho</p><h3>Um fator por vez</h3>
+        <p><b>S0</b> é a base (TimeTrialKing). <b>S1–S9</b> mudam <u>um único</u> ajuste em relação ao S0 — assim, a diferença de tempo tem um culpado claro.</p>
+        <p><b class="red">S10</b> foi sugerido por uma IA e muda ~8 ajustes de uma vez: é o teste "IA × engenheiro".</p>
+        <p class="muted">S0 é rodado no início e no fim de cada sessão para medir o <b>ruído do piloto</b>.</p>
+      </article>
+    </div>
+    <div class="setups reveal" id="setups"></div>
+    <details class="tabela-wrap reveal"><summary>Ver tabela completa S0 × S10</summary><div id="tabS10"></div></details>
+  </div>
+</section>
+
+<!-- CAPTURA -->
+<section id="captura" class="sec dark2">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">02</span><div><p class="kicker">Captura de telemetria</p><h2 class="big">Do jogo ao CSV<br>em tempo real</h2></div></div>
+    <div class="pipeline reveal">
+      <div class="step"><i>01</i><h4>F1 23</h4><p>O jogo transmite pacotes UDP (porta 20777) ~20× por segundo.</p></div>
+      <div class="step"><i>02</i><h4>Python</h4><p><code>capturar_telemetria.py</code> decodifica Motion, LapData, CarTelemetry, Setup, History.</p></div>
+      <div class="step"><i>03</i><h4>Limpeza</h4><p>Só voltas válidas: sem volta de saída, box, flashback; corte de 107% da mediana.</p></div>
+      <div class="step"><i>04</i><h4>2 datasets</h4><p><b>voltas.csv</b> (1 linha/volta) e <b>amostras.csv</b> (posição, velocidade, freio…).</p></div>
+      <div class="step"><i>05</i><h4>Modelos</h4><p>Python / R tidymodels, validação por blocos, deploy em API.</p></div>
+    </div>
+    <div class="code-card reveal"><div class="code-top"><i></i><i></i><i></i><span>terminal</span></div>
+<pre><span class="c"># uma sessão = 1 carro × 1 setup</span>
+python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dados
+<span class="g">✔ volta 7  1:12.418  válida   S10  ferrari</span>
+<span class="g">✔ volta 8  1:12.106  válida   S10  ferrari</span>
+<span class="r">✘ volta 9  inválida (limite de pista)</span></pre>
+      <p class="mini">Ilustração do formato de saída — não são tempos reais.</p></div>
+  </div>
+</section>
+
+<!-- TELEMETRIA -->
+<section id="telemetria" class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">03</span><div><p class="kicker">Telemetria interativa</p><h2 class="big">Onde o tempo<br>se perde</h2></div></div>
+    <div class="tel-ctrl reveal">
+      <label>Carro<select id="fCarro"><option value="">Todos</option><option value="ferrari">Ferrari</option><option value="alfaromeo">Alfa Romeo</option></select></label>
+      <label>Setup A<select id="fSetupA"></select></label>
+      <label>Setup B<select id="fSetupB"></select></label>
+      <label>Melhores voltas<select id="fTop"><option>10</option><option>25</option><option selected>100</option><option value="9999">todas</option></select></label>
+      <div class="seg" id="fModo"><button data-m="vel" class="on">Velocidade</button><button data-m="freio">Frenagem</button><button data-m="delta">Δ B − A</button></div>
+    </div>
+    <div class="tel-grid reveal">
+      <div class="card mapa-card"><canvas id="mapa" width="900" height="620"></canvas><div class="legenda" id="legenda"></div><p class="badge" id="badgeTel"></p></div>
+      <div class="side">
+        <div class="card kpi"><span>Volta mais rápida A</span><b id="kA">—</b></div>
+        <div class="card kpi"><span>Volta mais rápida B</span><b id="kB">—</b></div>
+        <div class="card kpi"><span>Diferença média B − A</span><b id="kD">—</b></div>
+        <div class="card kpi"><span>Pontos de frenagem (A / B)</span><b id="kF">—</b></div>
+      </div>
+    </div>
+    <div class="card reveal"><canvas id="velChart" height="110"></canvas></div>
+    <p class="mini">Mapa desenhado com as coordenadas <code>world_x/world_z</code> do jogo. Pontos de frenagem = momento em que o freio passa de &lt;10% para ≥30%. <a id="linkDash" href="#" target="_blank" rel="noopener">Abrir o dashboard completo ↗</a></p>
+  </div>
+</section>
+
+<!-- RESULTADOS -->
+<section id="resultados" class="sec dark2">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">04</span><div><p class="kicker">Resultados</p><h2 class="big">A máquina<br>aprendendo</h2></div></div>
+    <div class="aviso-ex" id="avisoRes" hidden></div>
+    <div class="res-top reveal">
+      <div class="card big-num"><span>Melhor modelo</span><b id="rMelhor">—</b></div>
+      <div class="card big-num"><span>MAE no teste</span><b id="rMae">—</b><small>erro médio por volta</small></div>
+      <div class="card big-num"><span>Ruído do piloto</span><b id="rRuido">—</b><small>régua: setup precisa superar isso</small></div>
+    </div>
+    <div class="card reveal"><div class="rank-head"><h4>Classificação dos modelos <span class="mini" id="regFonte"></span></h4><div class="seg" id="regAlvo"></div></div><div id="tabModelos" class="timing"></div></div>
+    <div class="res-grid reveal">
+      <div class="card"><h4 id="chModelosT">Comparação de modelos (MAE, s — menor é melhor)</h4><canvas id="chModelos" height="220"></canvas></div>
+      <div class="card"><h4>O que mais pesa no tempo (importância por permutação)</h4><canvas id="chImp" height="220"></canvas></div>
+    </div>
+    <div class="card reveal"><div class="rank-head"><h4>Timing tower · setups vs S0</h4><p class="mono mini legenda-setor"><i class="sx p"></i>melhor do carro <i class="sx g"></i>melhor que S0 <i class="sx y"></i>pior que S0</p><div class="seg" id="rankCarro"><button data-c="ferrari" class="on">Ferrari</button><button data-c="alfaromeo">Alfa Romeo</button></div></div><div id="ranking"></div></div>
+  </div>
+</section>
+
+<!-- VIDEOS -->
+<section id="videos" class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">05</span><div><p class="kicker">Vídeos</p><h2 class="big">Na pista</h2></div></div>
+    <div class="vid-grid reveal" id="vids"></div>
+  </div>
+</section>
+
+<!-- SIMULADOR -->
+<section id="simulador" class="sec sim">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">06</span><div><p class="kicker">Simulador</p><h2 class="big">Seja o<br><em>engenheiro</em></h2></div></div>
+    <p class="lead">Escolha o carro, mexa nos ajustes e o modelo prevê o tempo de volta. Os ajustes começam no S0.</p>
+    <div class="sim-grid reveal">
+      <form class="card" id="simForm">
+        <div class="sim-top">
+          <div class="seg" id="simCarro"><button type="button" data-c="ferrari" class="on">Ferrari</button><button type="button" data-c="alfaromeo">Alfa Romeo</button></div>
+          <div class="seg"><button type="button" id="btnS0">Carregar S0</button><button type="button" id="btnS10">Carregar S10 (IA)</button></div>
+        </div>
+        <div id="sliders" class="sliders"></div>
+        <fieldset class="modsel"><legend>Modelos para comparar <button type="button" class="lnk" id="mTodos">todos</button> · <button type="button" class="lnk" id="mPadrao">só o padrão</button></legend><div id="simModelos" class="chips"><span class="muted mini">carregando registro…</span></div></fieldset>
+        <button class="btn full" type="submit">Prever tempo de volta →</button>
+      </form>
+      <div class="card resultado" id="simRes">
+        <span class="muted" id="simTitulo">Tempo previsto · modelo padrão</span>
+        <b class="tempo" id="simTempo">–:––.–––</b>
+        <p id="simDif" class="muted">Ajuste e clique em prever.</p>
+        <div id="simAviso"></div>
+        <p id="simVel" class="mono"></p>
+        <p class="mini" id="apiStatus">verificando API…</p>
+      </div>
+    </div>
+    <div class="card reveal" id="simComp" hidden>
+      <div class="rank-head"><h4>Comparação lado a lado · previsão ± MAE de validação</h4><p class="mono mini legenda-setor"><i class="sx p"></i>modelo padrão <i class="sx g"></i>mais rápido que o S0 <i class="sx y"></i>mais lento que o S0</p></div>
+      <div class="simchart"><canvas id="chSim"></canvas></div>
+      <div id="simCards" class="mcards"></div>
+    </div>
+  </div>
+</section>
+
+<!-- METODOLOGIA / FAQ -->
+<section id="metodologia" class="sec dark2">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">07</span><div><p class="kicker">Metodologia</p><h2 class="big">Perguntas<br>da banca</h2></div></div>
+    <div class="faq reveal" id="faq"></div>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<section id="equipe" class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">08</span><div><p class="kicker">Equipe</p><h2 class="big">Box crew</h2></div></div>
+    <div class="team reveal" id="team"></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div><a class="logo" href="#topo"><span class="logo-mark">EV</span><span>ENGENHEIRO<b>VIRTUAL</b></span></a>
+      <p class="muted">Projeto acadêmico de Machine Learning · FECAF Gestão de Tecnologia · 2026.</p></div>
+    <div class="foot-links"><a id="ghLink" href="#">GitHub</a><a href="#resultados">Resultados</a><a href="#simulador">Simulador</a></div>
+    <p class="mini">Projeto de fã sem afiliação com a Formula 1, FIA, EA Sports ou equipes. Nomes citados apenas para identificar os carros do jogo. Nenhum logo oficial é usado. Fotos dos carros e vídeo do topo são ilustrações geradas por IA (carros genéricos, sem marcas).</p>
+  </div>
+</footer>
+</body>
+</html>

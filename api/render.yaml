@@ -1,0 +1,15 @@
+# Blueprint do Render. Para usar como Blueprint, este arquivo precisa estar na RAIZ do repositório
+# (o pacote já traz uma cópia em ./render.yaml).
+services:
+  - type: web
+    name: f1-monaco-api
+    runtime: docker
+    plan: free
+    rootDir: api
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MODELOS_DIR
+        value: /app/modelos          # = pasta api/modelos/ do repositório
+      - key: MODELO_PADRAO
+        sync: false                  # opcional: id de um modelo de tempo, ex. tempo__ridge (vazio = padrão do registro.json)

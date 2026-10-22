@@ -1,0 +1,11 @@
+fastapi==0.115.*
+uvicorn[standard]==0.32.*
+scikit-learn==1.9.1  # TEM que ser a mesma versão do Colab que treinou (veja sklearn_versao no modelo_info_python.json)
+pandas>=2.2
+joblib>=1.4
+numpy>=1.26
+pytest
+httpx
+# o registro carrega TODOS os modelos, então xgboost/lightgbm são necessários se existirem no registro
+xgboost==3.4.1
+lightgbm==4.7.0

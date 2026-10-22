@@ -1,0 +1,4 @@
+Coloque aqui (a landing usa automaticamente; sem eles mostra os DADOS DE EXEMPLO de data/demo):
+- voltas.csv                         (do capturar_telemetria.py)
+- amostras_leve.csv ou .csv.gz       (gere com: python dashboard/preparar_dados.py --entrada dados --saida landing/data --passo 8 --gzip)
+- resultados.json                    (gerado pela última célula do modelagem_python_colab.ipynb)

@@ -1,0 +1,25 @@
+# dados brutos grandes (não vão para o Git; o notebook lê da pasta local)
+amostras.csv
+*.zip
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# execução local do notebook
+_execucao_notebook.log
+_notebook_executado.ipynb
+*.log
+
+# editor/OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# segredos nunca entram
+.env
+.env.*
+*.pem

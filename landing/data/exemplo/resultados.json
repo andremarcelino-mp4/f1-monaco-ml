@@ -1,0 +1,333 @@
+{
+ "exemplo": true,
+ "aviso": "DADOS DE EXEMPLO (sintéticos) — não são resultados do estudo.",
+ "melhor_modelo": "random_forest",
+ "ruido_piloto_s": 0.4275218045112723,
+ "comparacao_modelos": [
+  {
+   "modelo": "baseline_media",
+   "cv": {
+    "mae": 0.5643954648786766,
+    "rmse": 1.344278028038867,
+    "r2": -0.019032384593052676
+   },
+   "teste": {
+    "mae": 0.5919456783656291,
+    "rmse": 1.554296550189673,
+    "r2": -0.021311333499298923
+   }
+  },
+  {
+   "modelo": "so_carro",
+   "cv": {
+    "mae": 0.5386774908285334,
+    "rmse": 1.3103152599474006,
+    "r2": 0.03180823763079954
+   },
+   "teste": {
+    "mae": 0.5810276442170941,
+    "rmse": 1.5374964929605426,
+    "r2": 0.0006476161011572668
+   }
+  },
+  {
+   "modelo": "lasso",
+   "cv": {
+    "mae": 0.5957142977009372,
+    "rmse": 1.3359531398029452,
+    "r2": -0.006450072582589561
+   },
+   "teste": {
+    "mae": 0.5780995794043214,
+    "rmse": 1.5396225080082842,
+    "r2": -0.0021180580535504756
+   }
+  },
+  {
+   "modelo": "ridge",
+   "cv": {
+    "mae": 0.6075908795607482,
+    "rmse": 1.338476521097859,
+    "r2": -0.01025567877549527
+   },
+   "teste": {
+    "mae": 0.5796189921491027,
+    "rmse": 1.542056390620103,
+    "r2": -0.005288920465222224
+   }
+  },
+  {
+   "modelo": "random_forest",
+   "cv": {
+    "mae": 0.5871370702093479,
+    "rmse": 1.4220074003076284,
+    "r2": -0.1402852289254699
+   },
+   "teste": {
+    "mae": 0.5834544205195905,
+    "rmse": 1.5788001810467944,
+    "r2": -0.05376730623889814
+   }
+  }
+ ],
+ "importancia": [
+  {
+   "variavel": "carro",
+   "aumento_mae_s": 0.14017350666523992
+  },
+  {
+   "variavel": "volta_stint",
+   "aumento_mae_s": 0.015533055258678008
+  },
+  {
+   "variavel": "asa_dianteira",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "asa_traseira",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "dif_com_acel",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "dif_sem_acel",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "cambagem_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "cambagem_tras",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "convergencia_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "convergencia_tras",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "suspensao_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "suspensao_tras",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "barra_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "barra_tras",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "altura_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "altura_tras",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "freio_pressao",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "freio_balanco",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "pneu_diant",
+   "aumento_mae_s": 0.0
+  },
+  {
+   "variavel": "pneu_tras",
+   "aumento_mae_s": 0.0
+  }
+ ],
+ "ranking": [
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S0",
+   "n": 40,
+   "media_real": 72.182125,
+   "dif_vs_s0": 0.0,
+   "previsto_medio": 72.20185741564823
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S1",
+   "n": 12,
+   "media_real": 71.96299999999998,
+   "dif_vs_s0": -0.21912500000001955,
+   "previsto_medio": 72.1406086155966
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S10",
+   "n": 12,
+   "media_real": 71.76775,
+   "dif_vs_s0": -0.4143749999999926,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S2",
+   "n": 8,
+   "media_real": 72.620875,
+   "dif_vs_s0": 0.43874999999999886,
+   "previsto_medio": 72.61885113578664
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S3",
+   "n": 10,
+   "media_real": 72.37610000000001,
+   "dif_vs_s0": 0.1939750000000089,
+   "previsto_medio": 72.47802788515654
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S4",
+   "n": 11,
+   "media_real": 72.61509090909092,
+   "dif_vs_s0": 0.4329659090909246,
+   "previsto_medio": 72.51842166283632
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S5",
+   "n": 12,
+   "media_real": 72.48658333333333,
+   "dif_vs_s0": 0.3044583333333293,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S6",
+   "n": 12,
+   "media_real": 71.9885,
+   "dif_vs_s0": -0.19362499999999727,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S7",
+   "n": 12,
+   "media_real": 72.12383333333334,
+   "dif_vs_s0": -0.05829166666666197,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S8",
+   "n": 12,
+   "media_real": 72.49458333333334,
+   "dif_vs_s0": 0.31245833333333906,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "alfaromeo",
+   "setup_id": "S9",
+   "n": 12,
+   "media_real": 72.86433333333333,
+   "dif_vs_s0": 0.6822083333333353,
+   "previsto_medio": 72.1155734201701
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S0",
+   "n": 40,
+   "media_real": 71.8129,
+   "dif_vs_s0": 0.0,
+   "previsto_medio": 71.79589590144346
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S1",
+   "n": 11,
+   "media_real": 71.58327272727273,
+   "dif_vs_s0": -0.2296272727272708,
+   "previsto_medio": 71.57619286002888
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S10",
+   "n": 10,
+   "media_real": 72.01790000000001,
+   "dif_vs_s0": 0.2050000000000125,
+   "previsto_medio": 71.48622026076329
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S2",
+   "n": 12,
+   "media_real": 71.44449999999999,
+   "dif_vs_s0": -0.3684000000000083,
+   "previsto_medio": 71.46782158492739
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S3",
+   "n": 12,
+   "media_real": 71.30191666666667,
+   "dif_vs_s0": -0.5109833333333285,
+   "previsto_medio": 71.29809401675483
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S4",
+   "n": 10,
+   "media_real": 71.65869999999998,
+   "dif_vs_s0": -0.1542000000000172,
+   "previsto_medio": 71.67327163359789
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S5",
+   "n": 12,
+   "media_real": 71.56383333333333,
+   "dif_vs_s0": -0.2490666666666641,
+   "previsto_medio": 71.4918268922366
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S6",
+   "n": 11,
+   "media_real": 72.217,
+   "dif_vs_s0": 0.4040999999999997,
+   "previsto_medio": 71.49584353467657
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S7",
+   "n": 11,
+   "media_real": 71.76245454545455,
+   "dif_vs_s0": -0.05044545454545357,
+   "previsto_medio": 71.49584353467657
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S8",
+   "n": 9,
+   "media_real": 72.9588888888889,
+   "dif_vs_s0": 1.145988888888894,
+   "previsto_medio": 71.47470799564528
+  },
+  {
+   "carro": "ferrari",
+   "setup_id": "S9",
+   "n": 12,
+   "media_real": 71.45691666666667,
+   "dif_vs_s0": -0.3559833333333273,
+   "previsto_medio": 71.4918268922366
+  }
+ ]
+}
