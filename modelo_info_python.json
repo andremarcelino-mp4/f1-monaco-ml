@@ -1,5 +1,5 @@
 {
- "modelo": "random_forest",
+ "modelo": "lasso",
  "preditores": [
   "asa_dianteira",
   "asa_traseira",
@@ -42,7 +42,7 @@
   "pneu_diant",
   "pneu_tras"
  ],
- "ruido_piloto_s": 1.2650795454545403,
+ "ruido_piloto_s": 1.5178863636363644,
  "faixas": {
   "asa_dianteira": [
    45.0,
@@ -118,9 +118,9 @@
   ]
  },
  "metricas_teste": {
-  "mae": 1.0360960353792203,
-  "rmse": 1.4358324418414805,
-  "r2": 0.07164720491483423
+  "mae": 1.1843580644773155,
+  "rmse": 1.4909317957264556,
+  "r2": -0.04519428757723398
  },
  "divisao": "grupo: sessões [5, 3] no teste",
  "sintetico": false,

@@ -74,7 +74,7 @@ function limpar(rows) {
   const L = rows.map(r => ({ uid: r.session_uid, volta: +r.volta, carro: String(r.carro || "").trim().toLowerCase(), setup: String(r.setup_id || "").trim().toUpperCase(),
     sessao: r.sessao, tempo: num(r.tempo_volta_ms) / 1000, r })).filter(x => x.tempo > 0);
   const ok = (r, c, v) => !(c in r) || r[c] === "" || num(r[c]) === v;
-  const base = L.filter(x => ok(x.r, "valida", 1) && ok(x.r, "volta_saida", 0) && ok(x.r, "entrou_box", 0) && ok(x.r, "flashbacks", 0) && ok(x.r, "pista_id", 5));
+  const base = L.filter(x => ok(x.r, "valida", 1) && ok(x.r, "pista_id", 5) && (x.carro === "ferrari" || x.carro === "alfaromeo"));
   const g = {}; base.forEach(x => (g[x.carro + x.setup] ??= []).push(x.tempo));
   const md = {}; for (const k in g) md[k] = median(g[k]);
   return base.filter(x => x.tempo <= 1.07 * md[x.carro + x.setup]).map(x => (x.k = key(x.uid, x.volta), x));
