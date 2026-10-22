@@ -5,7 +5,7 @@ window.CONFIG = {
   //   Render:       "https://f1-monaco-api.onrender.com"
   //   Oracle:       "https://api.seudominio.com"  (ou https://IP.sslip.io)
   //   Local:        "http://localhost:7860"
-  API_URL: "http://localhost:7860",
+  API_URL: "https://f1-monaco-api.onrender.com",
 
   // Vídeos: cole o ID do YouTube (parte depois de v=) ou deixe "".
   YOUTUBE_ID: "",
@@ -15,7 +15,7 @@ window.CONFIG = {
   MP4: "",           // ex.: "videos/volta_monaco.mp4"
 
   // Links
-  GITHUB: "",        // ex.: "https://github.com/andre/f1-monaco"
+  GITHUB: "https://github.com/andremarcelino-mp4/f1-monaco-ml",
   DASHBOARD: "",     // ex.: "https://f1-monaco-dashboard.vercel.app"
 
   // Equipe (nome, papel). Edite à vontade.
