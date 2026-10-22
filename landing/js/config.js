@@ -18,11 +18,8 @@ window.CONFIG = {
   GITHUB: "https://github.com/andremarcelino-mp4/f1-monaco-ml",
   DASHBOARD: "",     // ex.: "https://f1-monaco-dashboard.vercel.app"
 
-  // Equipe (nome, papel). Edite à vontade.
+  // Equipe (nome, papel, link opcional). Edite à vontade.
   EQUIPE: [
-    ["André Marcelino", "Piloto de testes · captura de telemetria · modelagem"],
-    ["Integrante 2", "EDA · engenharia de atributos"],
-    ["Integrante 3", "Modelos · validação"],
-    ["Integrante 4", "Deploy · landing page"]
+    ["André Marcelino", "Piloto de testes · captura de telemetria · modelagem", "https://www.linkedin.com/in/andr%C3%A9-marcelino-264b4135b/"]
   ]
 };
