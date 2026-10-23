@@ -601,7 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnFechar = $("btnFecharCarro"); if (btnFechar) btnFechar.onclick = fecharTelemetriaCarro;
   const modal = $("modalCarro"); if (modal) modal.onclick = e => { if (e.target.id === "modalCarro") fecharTelemetriaCarro(); };
   document.addEventListener("keydown", e => { if (e.key === "Escape") fecharTelemetriaCarro(); });
-  ["modalCarro","modalSetupA","modalSetupB","modalTop"].forEach(id => { const el = $(id); if (el) el.onchange = renderModal; });
+  ["modalCarroSelect","modalSetupA","modalSetupB","modalTop"].forEach(id => { const el = $(id); if (el) el.onchange = renderModal; });
   document.querySelectorAll(".card-open").forEach(b => { b.onclick = e => { e.preventDefault(); abrirTelemetriaCarro(b.dataset.team); }; });
   carregarRegistro().then(() => { montarSeletor(); carregarResultados(); }); carregarDados();
 });
