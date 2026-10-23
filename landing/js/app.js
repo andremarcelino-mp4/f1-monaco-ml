@@ -417,7 +417,11 @@ const FAQ = [
   ["Como o deploy funciona?", "A página é estática (Vercel). O simulador chama uma API FastAPI que carrega o modelo treinado no notebook (.joblib) e devolve o tempo previsto."]];
 function montarFaqEquipe() {
   $("faq").innerHTML = FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("");
-  $("team").innerHTML = (C.EQUIPE || []).map(([n, p, u]) => `<div class="card member"><div class="av">${esc(n.split(" ").map(s => s[0]).slice(0, 2).join(""))}</div><h3>${esc(n)}${u ? ` <a class="lnk" href="${esc(u)}" target="_blank" rel="noopener">LinkedIn ↗</a>` : ""}</h3><p class="muted">${esc(p)}</p></div>`).join("");
+  $("team").innerHTML = (C.EQUIPE || []).map(([n, p, u]) => {
+    const tag = u ? "a" : "div";
+    const extra = u ? ` href="${esc(u)}" target="_blank" rel="noopener" aria-label="${esc(n)} no LinkedIn"` : "";
+    return `<${tag} class="card member"${extra}><div class="av">${esc(n.split(" ").map(s => s[0]).slice(0, 2).join(""))}</div><h3>${esc(n)}</h3><p class="muted">${esc(p)}</p></${tag}>`;
+  }).join("");
   if (C.GITHUB) $("ghLink").href = C.GITHUB; else $("ghLink").style.display = "none";
   if (C.DASHBOARD) $("linkDash").href = C.DASHBOARD; else $("linkDash").style.display = "none";
 }
