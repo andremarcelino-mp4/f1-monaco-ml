@@ -47,7 +47,7 @@
     </div>
     <p class="fonte-dados" id="fonteDados">carregando dados…</p>
   </div>
-  <p class="ia-label">◆ Vídeo e imagens: ilustrações geradas por IA · sem marcas oficiais</p>
+  <p class="ia-label">◆ Vídeo: ilustração gerada por IA · Carros: imagens de referência com marcas oficiais</p>
   <div class="hero-stripe"></div>
 </section>
 <div class="ticker" aria-label="dados ao vivo"><div class="ticker-in" id="ticker"><span>CARREGANDO TELEMETRIA…</span></div></div>
@@ -57,8 +57,8 @@
   <div class="wrap">
     <div class="sec-head"><span class="num">01</span><div><p class="kicker">O experimento</p><h2 class="big">Um laboratório<br>de 3,3 km</h2></div></div>
     <div class="grid-asym reveal">
-      <article class="card car teamcard ferrari" style="--team:#E10600;--team2:#ffd23f"><span class="car-no">01</span><img class="car-img" src="assets/carro_vermelho.webp" srcset="assets/carro_vermelho_640.webp 640w, assets/carro_vermelho.webp 1024w" sizes="(max-width:980px) 92vw, 34vw" alt="Ilustração gerada por IA de um carro de F1 genérico vermelho" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 1 · SESSÕES 1–2 · S10 → 5</p><h3>Ferrari</h3></div><p>Sessões 1–2 (e 5 para o S10). Mesmo piloto, mesmas condições: pista seca, Grande Prêmio &gt; Treino Livre.</p></article>
-      <article class="card car teamcard alfa" style="--team:#8B1E2D;--team2:#ffffff"><span class="car-no">09</span><img class="car-img" src="assets/carro_grena.webp" srcset="assets/carro_grena_640.webp 640w, assets/carro_grena.webp 1024w" sizes="(max-width:980px) 92vw, 34vw" alt="Ilustração gerada por IA de um carro de F1 genérico grená e branco" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 9 · SESSÕES 3–4 · S10 → 6</p><h3>Alfa Romeo</h3></div><p>Sessões 3–4 (e 6 para o S10). Desempenho real dos carros ligado, para o carro <em>importar</em>.</p></article>
+      <article class="card car teamcard ferrari" style="--team:#E10600;--team2:#ffd23f"><span class="car-no">01</span><img class="car-img" src="assets/carro_vermelho.webp" srcset="assets/carro_vermelho_640.webp 640w, assets/carro_vermelho.webp 1280w" sizes="(max-width:980px) 92vw, 34vw" alt="Carro de F1 Ferrari vermelho em pista noturna" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 1 · SESSÕES 1–2 · S10 → 5</p><h3>Ferrari</h3></div><p>Sessões 1–2 (e 5 para o S10). Mesmo piloto, mesmas condições: pista seca, Grande Prêmio &gt; Treino Livre.</p><button class="card-open" data-team="ferrari" aria-label="Abrir telemetria do Ferrari">Ver telemetria do carro →</button></article>
+      <article class="card car teamcard alfa" style="--team:#8B1E2D;--team2:#ffffff"><span class="car-no">09</span><img class="car-img" src="assets/carro_grena.webp" srcset="assets/carro_grena_640.webp 640w, assets/carro_grena.webp 1280w" sizes="(max-width:980px) 92vw, 34vw" alt="Carro de F1 Alfa Romeo grená e branco em pista noturna" loading="lazy"><div class="team-meta"><p class="tag mono">EQUIPE ID 9 · SESSÕES 3–4 · S10 → 6</p><h3>Alfa Romeo</h3></div><p>Sessões 3–4 (e 6 para o S10). Desempenho real dos carros ligado, para o carro <em>importar</em>.</p><button class="card-open" data-team="alfaromeo" aria-label="Abrir telemetria do Alfa Romeo">Ver telemetria do carro →</button></article>
       <article class="card tall metodo">
         <p class="tag">Desenho</p><h3>Um fator por vez</h3>
         <p><b>S0</b> é a base (TimeTrialKing). <b>S1–S9</b> mudam <u>um único</u> ajuste em relação ao S0 — assim, a diferença de tempo tem um culpado claro.</p>
@@ -70,6 +70,42 @@
     <details class="tabela-wrap reveal"><summary>Ver tabela completa S0 × S10</summary><div id="tabS10"></div></details>
   </div>
 </section>
+
+<!-- MODAL TELEMETRIA CARRO -->
+<div id="modalCarro" class="modal" hidden role="dialog" aria-modal="true" aria-label="Telemetria e setup do carro">
+  <button class="modal-fechar" id="btnFecharCarro" aria-label="Fechar telemetria">✕</button>
+  <div class="modal-conteudo">
+    <div class="modal-cabecalho">
+      <div class="modal-time">
+        <div class="nome" id="modalNome">Ferrari</div>
+        <div class="sub" id="modalSub">Equipe 01 · Mônaco · Sessões 1–2</div>
+      </div>
+      <div class="modal-badges" id="modalBadges"></div>
+    </div>
+    <div class="modal-controles">
+      <label>Carro<select id="modalCarroSelect"></select></label>
+      <label>Setup A<select id="modalSetupA"></select></label>
+      <label>Setup B<select id="modalSetupB"></select></label>
+      <label>Melhores voltas<select id="modalTop"><option>10</option><option>25</option><option selected>100</option><option value="9999">todas</option></select></label>
+    </div>
+    <div class="modal-kpis" id="modalKpis"></div>
+    <div class="modal-grid">
+      <div class="modal-mapa">
+        <canvas id="modalMapa" width="900" height="620"></canvas>
+        <div id="modalLegenda"></div>
+      </div>
+      <div class="modal-graficos">
+        <div class="modal-card"><h4>Velocidade ao longo da volta</h4><canvas id="modalVelChart" height="210"></canvas></div>
+        <div class="modal-card"><h4>Δ tempo acumulado B − A (s)</h4><canvas id="modalDeltaChart" height="210"></canvas></div>
+      </div>
+      <div class="modal-setup">
+        <h4>Setup selecionado × S0 (base)</h4>
+        <div id="modalSetupComparacao"></div>
+      </div>
+    </div>
+    <div class="modal-insights" id="modalInsights"></div>
+  </div>
+</div>
 
 <!-- CAPTURA -->
 <section id="captura" class="sec dark2">
@@ -198,7 +234,7 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
     <div><a class="logo" href="#topo"><span class="logo-mark">EV</span><span>ENGENHEIRO<b>VIRTUAL</b></span></a>
       <p class="muted">Projeto acadêmico de Machine Learning · FECAF Gestão de Tecnologia · 2026.</p></div>
     <div class="foot-links"><a id="ghLink" href="#">GitHub</a><a href="#resultados">Resultados</a><a href="#simulador">Simulador</a></div>
-    <p class="mini">Projeto de fã sem afiliação com a Formula 1, FIA, EA Sports ou equipes. Nomes citados apenas para identificar os carros do jogo. Nenhum logo oficial é usado. Fotos dos carros e vídeo do topo são ilustrações geradas por IA (carros genéricos, sem marcas).</p>
+    <p class="mini">Projeto de fã sem afiliação com a Formula 1, FIA, EA Sports ou equipes. Nomes citados apenas para identificar os carros do jogo. Fotos dos carros exibem marcas oficiais de suas equipes/patrocinadores; o vídeo do topo é ilustração gerada por IA.</p>
   </div>
 </footer>
 </body>

@@ -245,6 +245,44 @@ select,input[type=number]{border-radius:3px;font-family:var(--f-mono)}
 @media (max-width:980px){.tw{grid-template-columns:30px 5px 50px 1fr repeat(3,52px)}}
 @media (max-width:980px){.tower{overflow:hidden}.tw{grid-template-columns:26px 4px 44px 1fr repeat(3,44px);gap:4px;font-size:.7rem}.sec-c{font-size:.62rem;padding:3px 0}.tw .pos{font-size:.9rem}.tw .lap{text-align:left}}
 
+/* botão abrir telemetria nos cards de equipe */
+.card-open{margin-top:14px;align-self:flex-start;background:var(--team,var(--red));color:#fff;border:0;border-radius:4px;padding:8px 14px;font:700 .82rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;cursor:pointer;box-shadow:0 0 14px rgba(225,6,0,.35)}
+.card-open:hover{filter:brightness(1.15);transform:translateY(-1px)}
+
+/* ===== modal telemetria carro (experimento) ===== */
+.modal{position:fixed;inset:0;z-index:200;background:#000e;display:grid;place-items:center;padding:24px;overflow:auto;outline:none}
+.modal[hidden]{display:none}
+.modal-fechar{position:absolute;top:18px;right:22px;z-index:10;background:var(--red);border:0;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.7rem;line-height:1;cursor:pointer;font:900 var(--f-head);box-shadow:0 0 16px rgba(225,6,0,.45)}
+.modal-fechar:hover{background:var(--red2)}
+.modal-conteudo{background:var(--card2);border:1px solid var(--line);border-radius:6px;width:min(1180px,96vw);max-height:93vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 50px #000a}
+.modal-cabecalho{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line)}
+.modal-time{display:flex;flex-direction:column;gap:4px}
+.modal-time .nome{font-family:var(--f-head);font-weight:900;text-transform:uppercase;font-size:2rem;letter-spacing:-.02em;color:#fff}
+.modal-time .sub{font-family:var(--f-mono);font-size:.78rem;color:var(--mut);letter-spacing:.08em}
+.modal-badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.75rem;color:#cfcfd6;background:#0c0c0f}
+.badge-pill b{color:var(--txt);font-family:var(--f-head);font-weight:800}
+.modal-controles{display:flex;flex-wrap:wrap;gap:12px;align-items:end;padding:12px 24px;border-bottom:1px solid var(--line);background:#0a0a0c}
+.modal-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 24px}
+.modal-kpi{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.modal-kpi span{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
+.modal-kpi b{font-family:var(--f-head);font-weight:900;font-size:1.5rem;color:#fff}
+.modal-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;padding:16px 24px;overflow:auto}
+.modal-mapa{background:#060609;border:1px solid var(--line);border-radius:6px;padding:10px;position:relative}
+.modal-mapa canvas{width:100%;height:auto;display:block}
+.modal-graficos{display:flex;flex-direction:column;gap:12px}
+.modal-card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px}
+.modal-card h4{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:.95rem;margin:0 0 10px;color:#ddd}
+.modal-setup{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px}
+.modal-setup h4{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:.95rem;margin:0 0 10px;color:#ddd}
+.modal-insights{padding:12px 24px 24px;border-top:1px solid var(--line)}
+.insight{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;padding:8px 10px;border-radius:6px;background:#0a0a0c;border:1px solid #16161c}
+.insight .ico{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;flex-shrink:0}
+.insight .ico.g{background:#22c55e;color:#000}.insight .ico.r{background:var(--red2);color:#fff}.insight .ico.p{background:#a855f7;color:#000}
+.insight p{font-size:.86rem;color:#cfcfd6;margin:0;line-height:1.45}
+.insight b{color:#fff}
+@media (max-width:980px){.modal-grid,.modal-kpis{grid-template-columns:1fr}}
+
 /* ===== v3: comparação de vários modelos ===== */
 .modsel{border:1px solid #26262e;border-radius:10px;padding:10px 12px;margin:14px 0}
 .modsel legend{font:600 .78rem "JetBrains Mono",monospace;color:#9a9aa6;padding:0 6px;text-transform:uppercase;letter-spacing:.06em}

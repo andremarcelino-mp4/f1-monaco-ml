@@ -426,6 +426,162 @@ function montarFaqEquipe() {
   if (C.DASHBOARD) $("linkDash").href = C.DASHBOARD; else $("linkDash").style.display = "none";
 }
 
+/* ---------- modal telemetria carro (cards Ferrari / Alfa Romeo) ---------- */
+const M = { team: "ferrari", chartV: null, chartD: null };
+
+function abrirTelemetriaCarro(team) {
+  M.team = team;
+  const el = $("modalCarro");
+  if (!el) return;
+  el.hidden = false;
+  el.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  montarControlesModal();
+  renderModal();
+}
+
+function fecharTelemetriaCarro() {
+  const el = $("modalCarro");
+  if (!el) return;
+  el.hidden = true;
+  el.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  if (M.chartV) { M.chartV.destroy(); M.chartV = null; }
+  if (M.chartD) { M.chartD.destroy(); M.chartD = null; }
+}
+
+function montarControlesModal() {
+  const ss = [...new Set(D.voltas.map(v => v.setup))].sort((a, b) => +a.slice(1) - +b.slice(1));
+  const carSel = $("modalCarroSelect");
+  carSel.innerHTML = `<option value="ferrari">Ferrari</option><option value="alfaromeo">Alfa Romeo</option>`;
+  carSel.value = M.team;
+  opcoes($("modalSetupA"), ss, "S0");
+  opcoes($("modalSetupB"), ss, ss.includes("S10") ? "S10" : (ss[1] || "S0"));
+}
+
+function lapsDe(team, setup, n) {
+  return D.voltas.filter(v => v.setup === setup && v.carro === team).sort((a, b) => a.tempo - b.tempo).slice(0, n);
+}
+function perfilVoltas(voltas) {
+  const acc = new Map(); const BIN = 10;
+  for (const v of voltas) { const arr = D.am.get(v.k); if (!arr) continue;
+    for (const p of arr) { const b = Math.floor(p.d / BIN); let o = acc.get(b); if (!o) acc.set(b, o = { v: [], t: [], x: [], z: [] });
+      o.v.push(p.v); o.t.push(p.t); o.x.push(p.x); o.z.push(p.z); } }
+  return [...acc.entries()].sort((a, b) => a[0] - b[0]).map(([b, o]) => ({ d: b * BIN, v: mean(o.v), t: mean(o.t), x: median(o.x), z: median(o.z) }));
+}
+function frenagensVoltas(voltas) {
+  const pts = [];
+  for (const v of voltas) { const arr = D.am.get(v.k); if (!arr) continue;
+    for (let i = 1; i < arr.length; i++) if (arr[i - 1].b < 0.1 && arr[i].b >= 0.3) pts.push(arr[i]); }
+  return pts;
+}
+
+function renderModal() {
+  if (!D.carregado) {
+    $("modalKpis").innerHTML = '<p class="muted">Carregando telemetria…</p>';
+    $("modalInsights").innerHTML = ""; $("modalLegenda").innerHTML = "";
+    const cv = $("modalMapa"), g = cv.getContext("2d"); g.clearRect(0, 0, cv.width, cv.height);
+    return;
+  }
+  const team = $("modalCarroSelect").value || M.team;
+  M.team = team;
+  const PT = { ferrari: "Ferrari", alfaromeo: "Alfa Romeo" };
+  const COR = { ferrari: "#E10600", alfaromeo: "#8B1E2D" };
+  $("modalNome").textContent = PT[team];
+  $("modalNome").style.color = COR[team];
+  $("modalSub").textContent = team === "ferrari" ? "Equipe 01 · Mônaco · Sessões 1–2 (e 5 para S10)" : "Equipe 09 · Mônaco · Sessões 3–4 (e 6 para S10)";
+  desenharMapaModal();
+  chartVelModal();
+  chartDeltaModal();
+  renderSetupComparacao();
+  renderInsightsModal();
+}
+
+function desenharMapaModal() {
+  const cv = $("modalMapa"), g = cv.getContext("2d"), W = cv.width, H = cv.height;
+  g.clearRect(0, 0, W, H);
+  const team = $("modalCarroSelect").value; const setupA = $("modalSetupA").value; const setupB = $("modalSetupB").value; const n = +$("modalTop").value;
+  const A = lapsDe(team, setupA, n), B = lapsDe(team, setupB, n);
+  const pA = perfilVoltas(A), pB = perfilVoltas(B);
+  const ref = pA.length ? pA : pB;
+  if (!ref.length) { g.fillStyle = "#888"; g.font = "20px Titillium Web"; g.fillText("Sem amostras para este filtro.", 30, 50); return; }
+  const xs = ref.map(p => p.x).filter(isFinite), zs = ref.map(p => p.z).filter(isFinite);
+  const mx = Math.min(...xs), Mx = Math.max(...xs), mz = Math.min(...zs), Mz = Math.max(...zs);
+  const s = Math.min((W - 60) / (Mx - mx), (H - 60) / (Mz - mz)), ox = (W - (Mx - mx) * s) / 2, oz = (H - (Mz - mz) * s) / 2;
+  const P = p => [ox + (p.x - mx) * s, oz + (p.z - mz) * s];
+  g.lineCap = "round"; g.lineJoin = "round";
+  g.strokeStyle = "#1f1f25"; g.lineWidth = 22; g.beginPath(); ref.forEach((p, i) => { const [x, y] = P(p); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+  const p = pA; const vals = p.map(x => x.v); const lo = Math.min(...vals), hi = Math.max(...vals);
+  g.lineWidth = 7;
+  for (let i = 1; i < p.length; i++) { const t = (p[i].v - lo) / (hi - lo || 1);
+    const [x0, y0] = P(p[i - 1]), [x1, y1] = P(p[i]); if (Math.hypot(x1 - x0, y1 - y0) > 40) continue;
+    g.strokeStyle = `hsl(${120 * t},90%,55%)`; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); }
+  const fB = frenagensVoltas(B);
+  g.fillStyle = "#E10600"; fB.forEach(p => { const [x, y] = P(p); g.beginPath(); g.arc(x, y, 5, 0, 7); g.fill(); });
+  const [sx, sy] = P(ref[0]); g.fillStyle = "#fff"; g.fillRect(sx - 3, sy - 12, 6, 24);
+  $("modalLegenda").innerHTML = `<span style="color:#fff">● ${esc(setupA)} velocidade</span><span style="color:#E10600">● ${esc(setupB)} frenagens</span><span style="margin-left:auto;color:var(--mut);font-size:.78rem">${A.length} voltas ${esc(setupA)} · ${B.length} voltas ${esc(setupB)}</span>`;
+}
+
+function chartVelModal() {
+  const cv = $("modalVelChart"), gx = cv.getContext("2d"); if (M.chartV) M.chartV.destroy();
+  const team = $("modalCarroSelect").value; const setupA = $("modalSetupA").value; const setupB = $("modalSetupB").value; const n = +$("modalTop").value;
+  const A = lapsDe(team, setupA, n), B = lapsDe(team, setupB, n);
+  const pA = perfilVoltas(A), pB = perfilVoltas(B);
+  M.chartV = new Chart(gx, { type: "line", data: {
+    labels: pA.map(p => p.d),
+    datasets: [
+      { label: setupA, data: pA.map(p => ({ x: p.d, y: p.v })), borderColor: "#fff", borderWidth: 1.5, pointRadius: 0, fill: false },
+      { label: setupB, data: pB.map(p => ({ x: p.d, y: p.v })), borderColor: "#E10600", borderWidth: 1.5, pointRadius: 0, fill: false }] },
+    options: { animation: false, parsing: false, plugins: { legend: { labels: { color: "#ccc" } }, title: { display: true, text: "Velocidade média (km/h) por distância (m)", color: "#9a9aa6" } },
+      scales: { x: { type: "linear", ticks: { color: "#777" }, grid: { color: "#1c1c22" } }, y: { ticks: { color: "#777" }, grid: { color: "#1c1c22" } } } } });
+}
+function chartDeltaModal() {
+  const cv = $("modalDeltaChart"), gx = cv.getContext("2d"); if (M.chartD) M.chartD.destroy();
+  const team = $("modalCarroSelect").value; const setupA = $("modalSetupA").value; const setupB = $("modalSetupB").value; const n = +$("modalTop").value;
+  const A = lapsDe(team, setupA, n), B = lapsDe(team, setupB, n);
+  const pA = perfilVoltas(A), pB = perfilVoltas(B);
+  const mB = new Map(pB.map(p => [p.d, p.t]));
+  let acc = 0;
+  const data = pA.map(p => { const tb = mB.get(p.d); if (isFinite(tb)) acc += (tb - p.t); return { x: p.d, y: acc }; });
+  M.chartD = new Chart(gx, { type: "line", data: {
+    labels: pA.map(p => p.d),
+    datasets: [{ label: `Δ ${setupB} − ${setupA} (s)`, data, borderColor: "#a855f7", borderWidth: 2, pointRadius: 0, fill: false }] },
+    options: { animation: false, parsing: false, plugins: { legend: { labels: { color: "#ccc" } }, title: { display: true, text: "Diferença de tempo acumulado por setor (s)", color: "#9a9aa6" } },
+      scales: { x: { type: "linear", ticks: { color: "#777" }, grid: { color: "#1c1c22" } }, y: { ticks: { color: "#777" }, grid: { color: "#1c1c22" } } } } });
+}
+
+function renderSetupComparacao() {
+  const team = $("modalCarroSelect").value; const setup = $("modalSetupA").value;
+  const sel = SETUPS.find(s => s[0] === setup);
+  const changes = sel ? sel[3] : {};
+  const rows = AJ.map(([k, label]) => {
+    const s0 = S0[k], s1 = k in changes ? changes[k] : s0; const diff = s1 !== s0;
+    return `<tr><td>${esc(label)}</td><td>${s0}</td><td class="${diff ? "dif" : ""}">${s1}${diff ? " ←" : ""}</td></tr>`;
+  }).join("");
+  $("modalSetupComparacao").innerHTML = `<table><tr><th>Ajuste</th><th>S0 (base)</th><th>${esc(setup)}</th></tr>${rows}</table>`;
+}
+
+function renderInsightsModal() {
+  const team = $("modalCarroSelect").value; const setupA = $("modalSetupA").value; const setupB = $("modalSetupB").value; const n = +$("modalTop").value;
+  const A = lapsDe(team, setupA, n), B = lapsDe(team, setupB, n);
+  const meanA = mean(A.map(v => v.tempo)), meanB = mean(B.map(v => v.tempo));
+  const ruido = (R.dados && isFinite(R.dados.ruido_piloto_s)) ? R.dados.ruido_piloto_s : 1.5;
+  const items = [];
+  if (isFinite(meanA) && isFinite(meanB)) {
+    const gain = meanA - meanB;
+    if (gain > ruido) items.push({ c: "g", t: `${setupB} é <b>${sgn(gain)}</b> mais rápido que ${setupA} em média — ultrapassa o ruído do piloto (±${ruido.toFixed(3)} s).` });
+    else if (gain < -ruido) items.push({ c: "r", t: `${setupB} é <b>${sgn(-gain)}</b> mais lento que ${setupA} em média.` });
+    else items.push({ c: "p", t: `Diferença entre ${setupA} e ${setupB} fica dentro do ruído do piloto (±${ruido.toFixed(3)} s).` });
+  }
+  const bestA = A[0], bestB = B[0];
+  if (bestA && bestB) { const g2 = bestA.tempo - bestB.tempo;
+    items.push({ c: g2 > 0 ? "g" : (g2 < 0 ? "r" : "p"), t: `Melhor volta: ${setupB} ${fmt(bestB.tempo)} vs ${setupA} ${fmt(bestA.tempo)} — ${g2 > 0 ? "ganha" : g2 < 0 ? "perde" : "empata"} ${sgn(Math.abs(g2))}.` });
+  }
+  items.push({ c: "p", t: `${A.length} voltas ${setupA} e ${B.length} voltas ${setupB} analisadas (${PT(team)}).` });
+  $("modalInsights").innerHTML = items.map(it => `<div class="insight"><span class="ico ${it.c}">${it.c === "g" ? "✔" : it.c === "r" ? "✖" : "◆"}</span><p>${it.t}</p></div>`).join("");
+}
+function PT(t) { return { ferrari: "Ferrari", alfaromeo: "Alfa Romeo" }[t] || t; }
+
 /* ---------- animações ---------- */
 function reveal() {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
@@ -442,5 +598,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (vid && matchMedia("(prefers-reduced-motion: reduce)").matches) { vid.pause(); vid.removeAttribute("autoplay"); }
   else if (vid) { vid.muted = true; vid.play().catch(() => {}); }
   montarVideos(); montarSim(); montarFaqEquipe(); reveal();
+  const btnFechar = $("btnFecharCarro"); if (btnFechar) btnFechar.onclick = fecharTelemetriaCarro;
+  const modal = $("modalCarro"); if (modal) modal.onclick = e => { if (e.target.id === "modalCarro") fecharTelemetriaCarro(); };
+  document.addEventListener("keydown", e => { if (e.key === "Escape") fecharTelemetriaCarro(); });
+  ["modalCarro","modalSetupA","modalSetupB","modalTop"].forEach(id => { const el = $(id); if (el) el.onchange = renderModal; });
+  document.querySelectorAll(".card-open").forEach(b => { b.onclick = e => { e.preventDefault(); abrirTelemetriaCarro(b.dataset.team); }; });
   carregarRegistro().then(() => { montarSeletor(); carregarResultados(); }); carregarDados();
 });
