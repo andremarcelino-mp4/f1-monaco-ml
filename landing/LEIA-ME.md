@@ -6,4 +6,4 @@
 - `imagens/`: screenshots de teste (desktop e mobile).
 - Teste local: `python -m http.server 8080` dentro de `landing/` (abrir o index.html direto com duplo clique NÃO funciona, porque o navegador bloqueia a leitura dos CSVs).
 - Deploy: veja `GUIA_DEPLOY.md`, seção 6.
-- `assets/`: carro_vermelho/carro_grena (.webp + _640), onboard.mp4/.webm (fundo do topo, sem áudio) e onboard_poster.webp — ilustrações GERADAS POR IA, carros genéricos sem marcas.
+- `assets/`: carro_vermelho/carro_grena (webp 1280w + 640w; fonte `_640.jpg`), onboard.mp4/.webm (fundo do topo, sem áudio) e onboard_poster.webp — imagens dos carros com marcas oficiais; vídeo é ilustração gerada por IA.
