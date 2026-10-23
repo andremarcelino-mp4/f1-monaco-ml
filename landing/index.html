@@ -166,22 +166,7 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
     <div class="card reveal"><div class="rank-head"><h4>Classificação dos modelos <span class="mini" id="regFonte"></span></h4><div class="seg" id="regAlvo"></div></div><div id="tabModelos" class="timing"></div></div>
     <div class="res-grid reveal">
       <div class="card"><h4 id="chModelosT">Comparação de modelos (MAE, s — menor é melhor)</h4><canvas id="chModelos" height="220"></canvas></div>
-      <div class="card"><h4>O que mais pesa no tempo (importância por permutação)</h4><canvas id="chImp" height="220"></canvas></div>
-    </div>
-
-    <!-- POR QUE ESTES MODELOS -->
-    <div class="card reveal pm-raiz" id="porqueModelos">
-      <div class="rank-head"><h4>Por que estes modelos?</h4><p class="mono mini">Critério de seleção · parâmetros escolhidos · o que a validação cruzada decidiu</p></div>
-      <div id="pmCriterio"></div>
-      <div id="pmAlvos" class="pm-alvos"></div>
-      <div class="pm-charts">
-        <div class="pm-chartbox"><h5 class="pm-chart-title">MAE de CV · Tempo de volta</h5><canvas id="pmChTempo" height="220"></canvas></div>
-        <div class="pm-chartbox"><h5 class="pm-chart-title">MAE de CV · Velocidade máxima</h5><canvas id="pmChVelMax" height="220"></canvas></div>
-        <div class="pm-chartbox"><h5 class="pm-chart-title">MAE de CV · Velocidade média</h5><canvas id="pmChVelMedia" height="220"></canvas></div>
-      </div>
-      <div id="pmGrades"></div>
-      <div id="pmBaselines"></div>
-      <div id="pmRessalvas"></div>
+      <div class="card"><h4>O que mais pesa no tempo (importância por permutação)</h4><canvas id="chImp" height="220"></canvas><p id="impNota" class="mini"></p></div>
     </div>
 
     <div class="card reveal"><div class="rank-head"><h4>Timing tower · setups vs S0</h4><p class="mono mini legenda-setor"><i class="sx p"></i>melhor do carro <i class="sx g"></i>melhor que S0 <i class="sx y"></i>pior que S0</p><div class="seg" id="rankCarro"><button data-c="ferrari" class="on">Ferrari</button><button data-c="alfaromeo">Alfa Romeo</button></div></div><div id="ranking"></div></div>

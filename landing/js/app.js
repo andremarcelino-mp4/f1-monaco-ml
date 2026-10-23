@@ -220,6 +220,11 @@ async function carregarResultados() {
   const imp = (r.importancia || []).slice(0, 10);
   R.chI = new Chart($("chImp"), { type: "bar", data: { labels: imp.map(i => i.variavel), datasets: [{ label: "aumento do MAE (s)", data: imp.map(i => i.aumento_mae_s), backgroundColor: "#E10600" }] },
     options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
+  const impAll = r.importancia || [];
+  const zero = impAll.filter(i => !isFinite(i.aumento_mae_s) || i.aumento_mae_s <= 0.001).length;
+  $("impNota").textContent = zero
+    ? `Atenção: ${zero} ajuste(s) mostraram importância próxima de zero. Não é erro: significa que esse ajuste não melhora a previsão do tempo além do que os outros ajustes já explicam (sinal fraco ou correlação entre features). Apenas os ajustes com valor acima de zero ajudam o modelo a diferenciar voltas.`
+    : "Todos os ajustes mostram alguma influência no tempo de volta.";
   $("rankCarro").onclick = e => { const b = e.target.closest("button"); if (!b) return; R.carro = b.dataset.c;
     [...$("rankCarro").children].forEach(x => x.classList.toggle("on", x === b)); ranking(); };
   ranking(); if (REG.j) resultadosDoRegistro(); else tabelaModelos();
@@ -294,132 +299,21 @@ function tabelaRegistro() {
   const L = j.modelos.filter(m => m.alvo === a).sort((x, y) => x.metricas_cv.mae - y.metricas_cv.mae);
   const base = L.find(m => m.algoritmo === "baseline_media"), pad = j.padrao_por_alvo[a];
   const cls = m => m.id === pad ? "p" : (base && m.metricas_cv.mae < base.metricas_cv.mae ? "g" : "y");
-  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
+  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>Expl. CV (%)</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
     L.map((m, i) => { const c = m.metricas_cv, t = m.metricas_teste || {};
+      const expl = c.r2 > 0 ? "g" : "n";
       return `<div class="tw reg"><span class="pos">${i + 1}</span><span class="sid">${esc(nomeM(m))}</span>
       <span class="sec-c ${cls(m)}">${f3(c.mae)}<small> ±${f3(c.mae_dp, 2)}</small></span><span class="sec-c n hide-m">${f3(c.rmse)}</span>
-      <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
-    `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>`;
+      <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c ${expl}">${(c.r2 * 100).toFixed(1)}%</span>
+      <span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
+    `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>
+    <p class="mini">Expl. (%) = variância explicada pelo modelo (R² × 100). Não é “taxa de acerto” de classificação: o modelo prevê um tempo contínuo (segundos), não acerto/erro por volta.</p>`;
   if (R.chM) { R.chM.data.labels = L.map(nomeM); R.chM.data.datasets = [
       { label: "MAE CV", data: L.map(m => m.metricas_cv.mae), backgroundColor: L.map(m => m.id === pad ? "#a855f7" : "#555") },
       { label: "MAE teste", data: L.map(m => m.metricas_teste?.mae ?? null), backgroundColor: L.map(m => m.id === pad ? "#c084fc" : "#a33") }];
     $("chModelosT").textContent = `Comparação de modelos · ${ALVO_TXT[a] || a} (MAE, ${un} — menor é melhor)`; R.chM.update(); }
-  montarPorqueModelos();
 }
-/* ---------- por que estes modelos (Resultados) ---------- */
-const NOME_ALG = { lasso: "Lasso", ridge: "Ridge", random_forest: "Random Forest", xgboost: "XGBoost", lightgbm: "LightGBM", baseline_media: "Baseline (média)", so_carro: "Só carro" };
-const PMCharts = {};
-const PARAMS_ESCOLHIDOS = {
-  "tempo__lasso": { alpha: 0.019306977288832496, fit_intercept: true, max_iter: 20000 },
-  "vel_max__xgboost": { n_estimators: 200, max_depth: 2, learning_rate: 0.03, min_child_weight: 1 },
-  "vel_media__random_forest": { n_estimators: 200, max_features: 0.6, min_samples_leaf: 5 }
-};
-const GRADE_VENCEDOR = {
-  "tempo__lasso": { espaco: "alpha &isin; logspace(&minus;4, 0, 8)", n: 8, fixos: "max_iter=20000, random_state=42" },
-  "vel_max__xgboost": { espaco: "max_depth{2,4} &times; learning_rate{0,03,0,1} &times; min_child_weight{1,5}", n: 8, fixos: "n_estimators=200, random_state=42" },
-  "vel_media__random_forest": { espaco: "max_features{0,3,0,6,1,0} &times; min_samples_leaf{2,5,10}", n: 9, fixos: "n_estimators=200, random_state=42" }
-};
-const PORQUE_VENCEDOR = {
-  "tempo__lasso": "Sinal fraco e ruidoso (&asymp;277 voltas, 18 ajustes, ru&iacute;do do piloto &plusmn;1,52 s). A regulariza&ccedil;&atilde;o L1 zera coeficientes pouco relevantes, deixando o modelo mais interpret&aacute;vel e o mais est&aacute;vel entre dobras.",
-  "vel_max__xgboost": "Vel. m&aacute;xima reage de forma n&atilde;o-linear &agrave; asa traseira (arrasto). &Aacute;rvores rasas e aprendizado lento (depth=2, lr=0,03) capturam esse efeito sem decorar o ru&iacute;do de cada bloco.",
-  "vel_media__random_forest": "Vel. m&eacute;ria &eacute; quase o inverso do tempo de volta (dist&acirc;ncia fixa), ent&atilde;o herda o sinal do setup. M&eacute;dia de 200 &aacute;rvores com max_features=0,6 diversifica as previs\u00f5es e suprime o ru&iacute;do."
-};
-function modelosPorAlvo(alvo) { return (REG.j.modelos || []).filter(m => m.alvo === alvo).sort((a, b) => a.metricas_cv.mae - b.metricas_cv.mae); }
-function fNum(n, dec) { return n == null || !isFinite(n) ? "&ndash;" : n.toFixed(dec); }
-function desenharGraficoMAE(idCanvas, alvo) {
-  const ctx = $(idCanvas).getContext("2d"); if (PMCharts[idCanvas]) PMCharts[idCanvas].destroy();
-  const modelos = modelosPorAlvo(alvo);
-  const padraoId = REG.j.alvos[alvo].padrao;
-  const un = REG.j.alvos[alvo].unidade || (alvo === "tempo_s" ? "s" : "km/h");
-  PMCharts[idCanvas] = new Chart(ctx, { type: "bar", data: {
-    labels: modelos.map(m => NOME_ALG[m.algoritmo] || m.id),
-    datasets: [{ label: `MAE de CV (${un})`, data: modelos.map(m => m.metricas_cv.mae), backgroundColor: modelos.map(m => m.id === padraoId ? "#a855f7" : (["baseline_media","so_carro"].includes(m.algoritmo) ? "#666672" : "#2e2e36")), borderWidth: 0, borderSkipped: false, barPercentage: 0.7 }] },
-    options: { indexAxis: "y", animation: false, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: false } },
-      scales: { x: { ticks: { color: "#777" }, grid: { color: "#1c1c22" }, title: { display: true, text: `MAE de CV (${un})`, color: "#9a9aa6" } }, y: { ticks: { color: "#ccc" }, grid: { color: "#1c1c22" } } } } });
-}
-function montarPorqueModelos() {
-  if (!REG.j) return;
-  const unTempo = "s", unVel = "km/h";
-  const alvos = ["tempo_s", "vel_max_kmh", "vel_media_kmh"];
-  const nomesAlvo = { tempo_s: "Tempo de volta", vel_max_kmh: "Velocidade m&aacute;xima", vel_media_kmh: "Velocidade m&eacute;dia" };
-  const canvasPorAlvo = { tempo_s: "pmChTempo", vel_max_kmh: "pmChVelMax", vel_media_kmh: "pmChVelMedia" };
-  // critério
-  const crit = `<div class="pm-criterio"><h5>Como o modelo foi escolhido</h5>
-    <div class="pm-grid4">
-      <div class="pm-mini"><b>M&eacute;trica</b><span>MAE da valida&ccedil;&atilde;o cruzada</span><small>erro m&eacute;dio em segundos, f&aacute;cil de explicar</small></div>
-      <div class="pm-mini"><b>Valida&ccedil;&atilde;o</b><span>GroupKFold por bloco</span><small>bloco = carro &times; sess&atilde;o &times; setup &times; fase do S0</small></div>
-      <div class="pm-mini"><b>Folds</b><span>at&eacute; 5</span><small>voltas vizinhas do mesmo bloco n&atilde;o se separam</small></div>
-      <div class="pm-mini"><b>Entradas</b><span>setup + carro + volta_stint</span><small>sem telemetria, sem vazamento</small></div>
-    </div></div>`;
-  $("pmCriterio").innerHTML = crit;
-  // alvos
-  let html = "";
-  for (const alvo of alvos) {
-    const modelos = modelosPorAlvo(alvo);
-    const padraoId = REG.j.alvos[alvo].padrao;
-    const vencedor = modelos[0];
-    const hp = PARAMS_ESCOLHIDOS[vencedor.id] || {};
-    const grade = GRADE_VENCEDOR[vencedor.id] || { espaco: "&ndash;", n: "&ndash;", fixos: "" };
-    html += `<div class="pm-alvo"><h5 class="pm-alvo-title">${nomesAlvo[alvo]} &mdash; vencedor: ${NOME_ALG[vencedor.algoritmo] || vencedor.id}</h5>
-      <div class="pm-metros">
-        <div class="pm-metro"><span class="pm-rotulo">MAE CV</span><span class="pm-valor">${fNum(vencedor.metricas_cv.mae, 3)} ${unVel}</span></div>
-        <div class="pm-metro"><span class="pm-rotulo">RMSE CV</span><span class="pm-valor">${fNum(vencedor.metricas_cv.rmse, 3)} ${unVel}</span></div>
-        <div class="pm-metro"><span class="pm-rotulo">R&sup2; CV</span><span class="pm-valor">${fNum(vencedor.metricas_cv.r2, 3)}</span></div>
-        <div class="pm-metro"><span class="pm-rotulo">MAE teste</span><span class="pm-valor">${fNum(vencedor.metricas_teste?.mae, 3)} ${unVel}</span></div>
-        <div class="pm-metro"><span class="pm-rotulo">R&sup2; teste</span><span class="pm-valor">${fNum(vencedor.metricas_teste?.r2, 3)}</span></div>
-      </div>
-      <table class="pm-table"><tr><th>Ajuste</th><th>Escolhido</th></tr>` +
-        Object.entries(hp).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${typeof v === "number" ? v.toPrecision(4) : v}</td></tr>`).join("") +
-        `<tr><td>Grade avaliada</td><td>${grade.espaco}</td></tr>
-        <tr><td>Combinações</td><td>${grade.n}</td></tr>
-        <tr><td>Parâmetros fixos</td><td>${grade.fixos}</td></tr>
-        <tr><td>Por que venceu</td><td>${PORQUE_VENCEDOR[vencedor.id] || "menor MAE de CV entre os candidatos."}</td></tr>
-      </table>`;
-    // runners-up
-    const outros = modelos.filter(m => m.id !== vencedor.id && !["baseline_media","so_carro"].includes(m.algoritmo));
-    if (outros.length) {
-      html += `<div class="pm-runners"><span class="pm-rotulo">Outros modelos deste alvo (MAE de CV):</span> ` +
-        outros.map(m => `<span class="pm-chip">${NOME_ALG[m.algoritmo]} ${fNum(m.metricas_cv.mae, 3)} ${unVel}</span>`).join("") + `</div>`;
-    }
-    html += `</div>`;
-  }
-  $("pmAlvos").innerHTML = html;
-  // grades
-  let gradeHtml = `<h5 class="pm-section-title">Parâmetros escolhidos e espaços de busca avaliados</h5><table class="pm-table"><tr><th>Alvo</th><th>Modelo</th><th>Parâmetros escolhidos</th><th>Grade</th><th>Combinações</th></tr>`;
-  for (const alvo of alvos) {
-    const modelos = modelosPorAlvo(alvo);
-    const vencedor = modelos[0];
-    const hp = PARAMS_ESCOLHIDOS[vencedor.id] || {};
-    const grade = GRADE_VENCEDOR[vencedor.id] || {};
-    gradeHtml += `<tr><td>${nomesAlvo[alvo]}</td><td>${NOME_ALG[vencedor.algoritmo] || vencedor.id}</td>
-      <td class="pm-hp">${Object.entries(hp).map(([k, v]) => `${esc(k)}=${typeof v === "number" ? v.toPrecision(4) : v}`).join(", ") || "&ndash;"}</td>
-      <td>${grade.espaco || "&ndash;"}</td><td>${grade.n || "&ndash;"}</td></tr>`;
-  }
-  gradeHtml += `</table><p class="pm-nota">O espa&ccedil;o de busca detalhado &eacute; o da c&eacute;lula de registro do notebook. O valor registrado de <code>alpha</code> do Lasso (0,0193) n&atilde;o pertence à grade de oito valores mostrada ali: o registro foi gerado por uma vers&atilde;o anterior do c&oacute;digo de exporta&ccedil;&atilde;o e ainda n&atilde;o foi reexecutado com o c&oacute;digo atual.</p>`;
-  $("pmGrades").innerHTML = gradeHtml;
-  // baselines
-  const bas = `
-  <h5 class="pm-section-title">As baselines — a régua do que realmente importa</h5>
-  <div class="pm-grid3">
-    <div class="pm-baseline"><b>baseline_media</b><span>sempre prevê a média do treino</span><small>DummyRegressor(strategy="mean")</small></div>
-    <div class="pm-baseline"><b>so_carro</b><span>regressão linear só com o carro</span><small>OneHotEncoder(carro) + LinearRegression</small></div>
-    <div class="pm-baseline"><b>placebo</b><span>setup embaralhado</span><small>Random Forest com colunas de setup permutadas</small></div>
-  </div>
-  <p class="pm-nota">O vencedor de cada alvo precisa superar estas três referências. A comparação contra o placebo est&aacute; no notebook; o <code>registro.json</code> exportado ainda n&atilde;o traz as m&eacute;tricas do placebo.</p>`;
-  $("pmBaselines").innerHTML = bas;
-  // ressalvas
-  const res = `
-  <h5 class="pm-section-title">Notas metodológicas e limitações</h5>
-  <div class="pm-ressalvas">
-    <div class="pm-ressalva"><span class="pm-ico">⚠</span><p><b>R&sup2; do tempo &asymp; 0,03.</b> MAE &asymp; 1,1 s contra ru&iacute;do do piloto de &plusmn;1,52 s: o setup sozinho explica pouco o tempo de volta. A telemetria (trilha B) &eacute; a trilha explicativa; o modelo serve mais para ranquear e ler do que para prever com precisão.</p></div>
-    <div class="pm-ressalva"><span class="pm-ico">⚠</span><p><b>&ldquo;Só carro&rdquo; quase vence o XGBoost</b> em velocidade m&aacute;xima (MAE CV 5,218 vs 5,231): quase todo o ganho ali vem de saber o carro, n&atilde;o o setup.</p></div>
-    <div class="pm-ressalva"><span class="pm-ico">⚠</span><p><b>Vencedor por CV, n&atilde;o pelo teste.</b> Em <i>tempo_s</i> a Random Forest teve MAE de teste menor (1,030 vs 1,183 s), mas o Lasso foi mantido porque a escolha &eacute; deliberadamente pela validação cruzada — usar o teste para escolher contaminaria a avalia&ccedil;&atilde;o.</p></div>
-    <div class="pm-ressalva"><span class="pm-ico">⚠</span><p><b>Velocidade m&eacute;ria &eacute; quase redundante:</b> dist&acirc;ncia fixa ÷ tempo, traz pouca informa&ccedil;&atilde;o nova em relação ao tempo de volta.</p></div>
-  </div>`;
-  $("pmRessalvas").innerHTML = res;
-  // charts
-  for (const alvo of alvos) desenharGraficoMAE(canvasPorAlvo[alvo], alvo);
-}
+/* ---------- por que estes modelos (Resultados) - removido a pedido ---------- */
 function ticker() {
   const it = [];
   for (const c of ["ferrari", "alfaromeo"]) { const v = D.voltas.filter(x => x.carro === c).sort((a, b) => a.tempo - b.tempo)[0];

@@ -313,40 +313,13 @@ select,input[type=number]{border-radius:3px;font-family:var(--f-mono)}
 .tw.reg{grid-template-columns:28px minmax(110px,1.6fr) repeat(5,minmax(64px,1fr))}
 @media (max-width:720px){.tw.reg{grid-template-columns:22px minmax(80px,1.3fr) repeat(3,minmax(52px,1fr))}.tw.reg .hide-m{display:none}.simchart{height:260px}.mcards{grid-template-columns:1fr}}
 
-/* ===== por que estes modelos (Resultados 04) ===== */
-.pm-raiz{margin-top:14px}
-.pm-raiz h4{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:1.1rem;margin:0 0 4px;color:#ddd}
-.pm-raiz .pm-chart-title{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:.72rem;color:var(--mut);margin:10px 0 4px}
-.pm-criterio,.pm-section-title{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:1rem;color:#ddd;margin:18px 0 10px}
-.pm-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.pm-mini{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:5px}
-.pm-mini b{font-family:var(--f-head);font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:#fff}
-.pm-mini span{font-family:var(--f-mono);font-size:.82rem;color:#cfcfd6}
-.pm-mini small{font-family:var(--f-mono);font-size:.7rem;color:var(--mut)}
-.pm-alvos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
-.pm-alvo{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.pm-alvo-title{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.06em;font-weight:800;font-size:.9rem;color:#ddd;margin:0}
-.pm-metros{display:flex;gap:10px;flex-wrap:wrap}
-.pm-metro{background:#0a0a0c;border:1px solid #16161c;border-radius:4px;padding:6px 8px;min-width:90px}
-.pm-rotulo{font-family:var(--f-mono);font-size:.68rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
-.pm-valor{font-family:var(--f-mono);font-weight:800;font-size:1.1rem;color:#fff}
-.pm-table{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:.78rem;margin-top:8px;margin-bottom:12px}
-.pm-table th,.pm-table td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}
-.pm-table th{color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-size:.7rem}
-.pm-hp{font-family:var(--f-mono);font-size:.78rem;color:#cfcfd6}
-.pm-chartbox{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 14px 14px;display:flex;flex-direction:column}
-.pm-chartbox canvas{width:100%!important;height:220px!important;display:block}
-.pm-charts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;margin-bottom:14px}
-.pm-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.pm-baseline{background:#0a0a0c;border:1px solid #16161c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
-.pm-baseline b{font-family:var(--f-head);font-weight:800;font-size:.85rem;color:#fff}
-.pm-baseline span{font-family:var(--f-mono);font-size:.8rem;color:#cfcfd6}
-.pm-baseline small{font-family:var(--f-mono);font-size:.7rem;color:var(--mut)}
-.pm-runners{font-family:var(--f-mono);font-size:.78rem;color:var(--mut);margin-top:8px}
-.pm-chip{display:inline-block;background:#16161c;border:1px solid var(--line);border-radius:999px;padding:3px 8px;margin:2px 4px 2px 0;font-size:.74rem;color:#ccc}
-.pm-nota{font-family:var(--f-mono);font-size:.72rem;color:var(--mut);margin-top:6px;line-height:1.5}
-.pm-ressalvas{display:flex;flex-direction:column;gap:8px}
-.pm-ressalva{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:6px;background:#0a0a0c;border:1px solid #16161c}
-.pm-ico{font-size:1rem;flex-shrink:0}
-.pm-ressalva p{font-family:var(--f-mono);font-size:.8rem;color:#cfcfd6;margin:0;line-height:1.55}
-@media (max-width:980px){.pm-alvos,.pm-charts,.pm-grid4,.pm-grid3{grid-template-columns:1fr}.pm-mini,.pm-metro{min-width:auto}}
+/* telemetria mobile (seção 3) */
+@media (max-width:980px){
+  .tel-ctrl{flex-direction:column;align-items:stretch}
+  .tel-ctrl label{align-items:flex-start}
+  select,input[type=number]{min-width:auto;width:100%}
+  .side{grid-template-columns:1fr}
+  .kpi b{font-size:1.7rem}
+  .mapa-card{padding:6px}
+  .mapa-card canvas{max-height:300px}
+}
