@@ -199,6 +199,32 @@ function desenhar() {
     scales: { x: { type: "linear", ticks: { color: "#777" }, grid: { color: "#1c1c22" } }, y: { ticks: { color: "#777" }, grid: { color: "#1c1c22" } } } } });
 }
 
+/* plugin: rótulo de valor nas barras (importância por permutação) */
+const valorBarraImp = {
+  id: "valorBarraImp",
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset) => {
+      const meta = chart.getDatasetMeta(dataset.index);
+      if (!meta.data) return;
+      meta.data.forEach((bar, index) => {
+        const value = dataset.data[index];
+        if (value == null || !isFinite(value)) return;
+        const x = bar.x + bar.width / 2 + 4;
+        const y = bar.y;
+        ctx.save();
+        ctx.fillStyle = "#cfcfd6";
+        ctx.font = "11px JetBrains Mono, monospace";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.fillText(value.toFixed(3), x, y);
+        ctx.restore();
+      });
+    });
+  },
+};
+Chart.register(valorBarraImp);
+
 /* ---------- resultados (resultados.json do notebook) ---------- */
 const R = { dados: null, chM: null, chI: null, carro: "ferrari" };
 async function carregarResultados() {
@@ -219,12 +245,7 @@ async function carregarResultados() {
     options: { plugins: { legend: { labels: base } }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
   const imp = (r.importancia || []).slice(0, 10);
   R.chI = new Chart($("chImp"), { type: "bar", data: { labels: imp.map(i => i.variavel), datasets: [{ label: "aumento do MAE (s)", data: imp.map(i => i.aumento_mae_s), backgroundColor: "#E10600" }] },
-    options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
-  const impAll = r.importancia || [];
-  const zero = impAll.filter(i => !isFinite(i.aumento_mae_s) || i.aumento_mae_s <= 0.001).length;
-  $("impNota").textContent = zero
-    ? `Atenção: ${zero} ajuste(s) mostraram importância próxima de zero. Não é erro: significa que esse ajuste não melhora a previsão do tempo além do que os outros ajustes já explicam (sinal fraco ou correlação entre features). Apenas os ajustes com valor acima de zero ajudam o modelo a diferenciar voltas.`
-    : "Todos os ajustes mostram alguma influência no tempo de volta.";
+    options: { indexAxis: "y", animation: false, plugins: { legend: { display: false }, valorBarraImp: {} }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
   $("rankCarro").onclick = e => { const b = e.target.closest("button"); if (!b) return; R.carro = b.dataset.c;
     [...$("rankCarro").children].forEach(x => x.classList.toggle("on", x === b)); ranking(); };
   ranking(); if (REG.j) resultadosDoRegistro(); else tabelaModelos();
@@ -299,7 +320,7 @@ function tabelaRegistro() {
   const L = j.modelos.filter(m => m.alvo === a).sort((x, y) => x.metricas_cv.mae - y.metricas_cv.mae);
   const base = L.find(m => m.algoritmo === "baseline_media"), pad = j.padrao_por_alvo[a];
   const cls = m => m.id === pad ? "p" : (base && m.metricas_cv.mae < base.metricas_cv.mae ? "g" : "y");
-  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>Expl. CV (%)</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
+  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>Acerto CV (%)</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
     L.map((m, i) => { const c = m.metricas_cv, t = m.metricas_teste || {};
       const expl = c.r2 > 0 ? "g" : "n";
       return `<div class="tw reg"><span class="pos">${i + 1}</span><span class="sid">${esc(nomeM(m))}</span>
@@ -307,7 +328,7 @@ function tabelaRegistro() {
       <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c ${expl}">${(c.r2 * 100).toFixed(1)}%</span>
       <span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
     `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>
-    <p class="mini">Expl. (%) = variância explicada pelo modelo (R² × 100). Não é “taxa de acerto” de classificação: o modelo prevê um tempo contínuo (segundos), não acerto/erro por volta.</p>`;
+    <p class="mini">Acerto CV (%) = variância explicada na validação cruzada (R² × 100). Não é taxa de acerto de classificação: o modelo prevê um tempo contínuo (segundos), não acerto/erro por volta.</p>`;
   if (R.chM) { R.chM.data.labels = L.map(nomeM); R.chM.data.datasets = [
       { label: "MAE CV", data: L.map(m => m.metricas_cv.mae), backgroundColor: L.map(m => m.id === pad ? "#a855f7" : "#555") },
       { label: "MAE teste", data: L.map(m => m.metricas_teste?.mae ?? null), backgroundColor: L.map(m => m.id === pad ? "#c084fc" : "#a33") }];
