@@ -265,10 +265,15 @@ function ranking() {
     const c = o[k] <= best[k] + 1e-9 ? "p" : (st === "S0" ? "n" : (s0 && o[k] < s0[k] ? "g" : "y"));
     return `<span class="sec-c ${c}" title="S${k + 1}: ${o[k].toFixed(3)} s">${o[k].toFixed(3)}</span>`; };
   const lider = L[0]?.media_real;
+  const s0Media = L.find(x => x.setup_id === "S0")?.media_real;
   $("ranking").innerHTML = `<div class="tower" style="--team:${COR_EQ[R.carro]}"><div class="tw head"><span>P</span><span></span><span>Setup</span><span class="ver">Leitura</span><span class="lap">Média</span><span class="gap">Gap</span><span>S1</span><span>S2</span><span>S3</span></div>` +
-    L.map((x, i) => `<div class="tw"><span class="pos">${i + 1}</span><span class="tc"></span><span class="sid">${esc(x.setup_id)}${x.setup_id === "S10" ? '<span class="ia">IA</span>' : ""}</span>
+    L.map((x, i) => {
+      const pct = s0Media ? ((s0Media - x.media_real) / s0Media * 100) : null;
+      const pc = pct == null ? "n" : (pct > 0 ? "g" : pct < 0 ? "y" : "n");
+      return `<div class="tw"><span class="pos">${i + 1}</span><span class="tc"></span><span class="sid">${esc(x.setup_id)}${x.setup_id === "S10" ? '<span class="ia">IA</span>' : ""}</span>
       <span class="ver">${esc(x.veredito || (x.setup_id === "S0" ? "referência" : sgn(x.dif_vs_s0) + " vs S0"))}</span>
-      <span class="lap">${fmt(x.media_real)}</span><span class="gap">${i ? "+" + (x.media_real - lider).toFixed(3) : "LÍDER"}</span>${[0, 1, 2].map(k => cel(x.setup_id, k)).join("")}</div>`).join("") + "</div>"
+      <span class="lap">${fmt(x.media_real)}</span><span class="gap ${pc}">${i ? "+" + (x.media_real - lider).toFixed(3) : "LÍDER"}${pct == null ? "" : ` · ${pct > 0 ? "+" : ""}${pct.toFixed(2)}% vs S0`}</span>${[0, 1, 2].map(k => cel(x.setup_id, k)).join("")}</div>`;
+    }).join("") + "</div>"
     || '<p class="muted">Sem ranking para este carro.</p>';
 }
 function tabelaModelos() { // formato antigo (resultados.json) — usado só se não houver registro
@@ -388,7 +393,9 @@ async function prever(e) {
     const j = await r.json(); if (!r.ok) throw new Error(typeof j.detail === "string" ? j.detail : JSON.stringify(j.detail || r.status));
     $("simTempo").textContent = j.tempo_formatado;
     $("simTitulo").textContent = "Tempo previsto · padrão: " + (j.modelo || "").replace(/_/g, " ");
-    $("simDif").innerHTML = `${NOME[j.carro]} · ${sgn(j.dif_vs_S0_s)} vs S0 · <b>${esc(j.leitura)}</b>${j.ruido_piloto_s ? ` (ruído ±${j.ruido_piloto_s.toFixed(3)} s)` : ""}`;
+    const b0 = j.tempo_previsto_s - j.dif_vs_S0_s;
+    const p0 = isFinite(b0) ? -(j.dif_vs_S0_s / b0 * 100) : null;
+    $("simDif").innerHTML = `${NOME[j.carro]} · ${sgn(j.dif_vs_S0_s)} vs S0${p0 == null ? "" : ` · ${p0 > 0 ? "+" : ""}${p0.toFixed(2)}%`} · <b>${esc(j.leitura)}</b>${j.ruido_piloto_s ? ` (ruído ±${j.ruido_piloto_s.toFixed(3)} s)` : ""}`;
     if (j.velocidade_max_prevista_kmh != null) $("simVel").innerHTML = `VEL. MÁX prevista <b>${j.velocidade_max_prevista_kmh.toFixed(1)} km/h</b>` + (j.velocidade_media_prevista_kmh != null ? ` · VEL. MÉDIA <b>${j.velocidade_media_prevista_kmh.toFixed(1)} km/h</b>` : "");
     let av = "";
     if (j.extrapolacao?.length) av += `<div class="alerta">⚠ Fora da faixa de treino: ${j.extrapolacao.map(x => esc(x.ajuste)).join(", ")}. A previsão é só uma referência.</div>`;
@@ -419,9 +426,11 @@ function comparar(L) {
   SIM.ch = new Chart($("chSim"), { data, options: opt });
   $("simCards").innerHTML = L.map(x => { const m = meta(x.id), c = m.metricas_cv || {}, t = m.metricas_teste || {}, hp = m.hiperparametros || {};
     const dc = Math.abs(x.dif_vs_S0_s) < 5e-4 ? "n" : (x.dif_vs_S0_s < 0 ? "g" : "y");
+    const bb = x.tempo_previsto_s - x.dif_vs_S0_s;
+    const pp = isFinite(bb) ? -(x.dif_vs_S0_s / bb * 100) : null;
     return `<div class="mcard ${x.padrao ? "p" : ""}"><h5>${esc((x.algoritmo || x.id).replace(/_/g, " "))}${x.padrao ? "<small>PADRÃO</small>" : ""}</h5>
       <span class="lat">${x.latencia_ms} ms</span><span class="t">${esc(x.tempo_formatado)}</span>
-      <span class="d ${dc}">${sgn(x.dif_vs_S0_s)} vs S0</span>
+      <span class="d ${dc}">${sgn(x.dif_vs_S0_s)} vs S0</span>${pp == null ? "" : `<span class="d ${dc}">${pp > 0 ? "+" : ""}${pp.toFixed(2)}% vs S0</span>`}
       ${x.velocidade_max_prevista_kmh != null ? `<div class="mono mini">vel. máx ${x.velocidade_max_prevista_kmh.toFixed(1)} km/h (${x.velocidade_max_dif_vs_S0_kmh >= 0 ? "+" : ""}${x.velocidade_max_dif_vs_S0_kmh} vs S0)${x.velocidade_media_prevista_kmh != null ? ` · média ${x.velocidade_media_prevista_kmh.toFixed(1)}` : ""}</div>` : ""}
       <table><tr><th></th><th>MAE</th><th>RMSE</th><th>R²</th></tr>
       <tr><td>CV</td><td>${f3(c.mae)}${c.mae_dp != null ? "±" + f3(c.mae_dp, 2) : ""}</td><td>${f3(c.rmse)}</td><td>${f3(c.r2, 2)}</td></tr>
@@ -533,6 +542,7 @@ function renderModal() {
   chartVelModal();
   chartDeltaModal();
   renderSetupComparacao();
+  renderDesempenhoVsS0();
   renderInsightsModal();
 }
 
@@ -598,6 +608,24 @@ function renderSetupComparacao() {
     return `<tr><td>${esc(label)}</td><td>${s0}</td><td class="${diff ? "dif" : ""}">${s1}${diff ? " ←" : ""}</td></tr>`;
   }).join("");
   $("modalSetupComparacao").innerHTML = `<table><tr><th>Ajuste</th><th>S0 (base)</th><th>${esc(setup)}</th></tr>${rows}</table>`;
+}
+
+function renderDesempenhoVsS0() {
+  const team = $("modalCarroSelect").value;
+  const L = (R.dados.ranking || []).filter(x => x.carro === team);
+  const s0 = L.find(x => x.setup_id === "S0");
+  if (!s0 || !isFinite(s0.media_real)) { $("modalDesempenhoVsS0").innerHTML = ""; return; }
+  const base = s0.media_real;
+  const rows = L.map(x => {
+    const pct = x.setup_id === "S0" ? 0 : ((base - x.media_real) / base * 100);
+    const cls = Math.abs(pct) < 0.05 ? "n" : (pct > 0 ? "g" : "y");
+    const ver = x.veredito || (x.setup_id === "S0" ? "referência" : (x.dif_vs_s0 < 0 ? "mais rápido que o S0" : "mais lento que o S0"));
+    return `<tr><td class="sid">${esc(x.setup_id)}${x.setup_id === "S10" ? '<span class="ia">IA</span>' : ""}</td>
+      <td class="sec-c">${fmt(x.media_real)}</td>
+      <td class="sec-c ${cls}">${x.setup_id === "S0" ? "referência" : (pct > 0 ? "+" : "") + pct.toFixed(2) + "%"}</td>
+      <td class="ver">${esc(ver)}</td></tr>`;
+  }).join("");
+  $("modalDesempenhoVsS0").innerHTML = `<h4>Desempenho vs S0</h4><table><tr><th>Setup</th><th>Média</th><th>vs S0</th><th>Leitura</th></tr>${rows}</table>`;
 }
 
 function renderInsightsModal() {
