@@ -320,15 +320,12 @@ function tabelaRegistro() {
   const L = j.modelos.filter(m => m.alvo === a).sort((x, y) => x.metricas_cv.mae - y.metricas_cv.mae);
   const base = L.find(m => m.algoritmo === "baseline_media"), pad = j.padrao_por_alvo[a];
   const cls = m => m.id === pad ? "p" : (base && m.metricas_cv.mae < base.metricas_cv.mae ? "g" : "y");
-  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>Acerto CV (%)</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
+  $("tabModelos").innerHTML = `<div class="tower"><div class="tw head reg"><span>P</span><span>Modelo</span><span>MAE CV ± dp</span><span class="hide-m">RMSE CV</span><span>R² CV</span><span>MAE teste</span><span class="hide-m">R² teste</span></div>` +
     L.map((m, i) => { const c = m.metricas_cv, t = m.metricas_teste || {};
-      const expl = c.r2 > 0 ? "g" : "n";
       return `<div class="tw reg"><span class="pos">${i + 1}</span><span class="sid">${esc(nomeM(m))}</span>
       <span class="sec-c ${cls(m)}">${f3(c.mae)}<small> ±${f3(c.mae_dp, 2)}</small></span><span class="sec-c n hide-m">${f3(c.rmse)}</span>
-      <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c ${expl}">${(c.r2 * 100).toFixed(1)}%</span>
-      <span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
-    `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>
-    <p class="mini">Acerto CV (%) = variância explicada na validação cruzada (R² × 100). Não é taxa de acerto de classificação: o modelo prevê um tempo contínuo (segundos), não acerto/erro por volta.</p>`;
+      <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
+    `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>`;
   if (R.chM) { R.chM.data.labels = L.map(nomeM); R.chM.data.datasets = [
       { label: "MAE CV", data: L.map(m => m.metricas_cv.mae), backgroundColor: L.map(m => m.id === pad ? "#a855f7" : "#555") },
       { label: "MAE teste", data: L.map(m => m.metricas_teste?.mae ?? null), backgroundColor: L.map(m => m.id === pad ? "#c084fc" : "#a33") }];
