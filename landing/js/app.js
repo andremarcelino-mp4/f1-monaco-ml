@@ -27,12 +27,12 @@ const S0 = { asa_dianteira: 50, asa_traseira: 50, dif_com_acel: 50, dif_sem_acel
 const SETUPS = [
   ["S0", "Base TimeTrialKing", "referência", {}],
   ["S1", "Dif. c/ acel. 50 → 80", "diferencial travado", { dif_com_acel: 80 }],
-  ["S2", "Dif. s/ acel. 53 → 30", "menos trava na entrada", { dif_sem_acel: 30 }],
+  ["S2", "Dif. s/ acel. 53 → 80", "diferencial travado fora do acelerador", { dif_sem_acel: 80 }],
   ["S3", "Cambagem −3,5 / −2,0", "cambagem agressiva", { cambagem_diant: -3.5, cambagem_tras: -2.0 }],
   ["S4", "Conv. traseira 0,25 → 0,10", "traseira solta", { convergencia_tras: 0.10 }],
   ["S5", "Barra D 7 → 15", "barra dianteira dura", { barra_diant: 15 }],
   ["S6", "Barra T 5 → 12", "barra traseira dura", { barra_tras: 12 }],
-  ["S7", "Altura 25 / 45", "altura invertida", { altura_diant: 25, altura_tras: 45 }],
+  ["S7", "Altura 30 / 45", "altura invertida", { altura_diant: 30, altura_tras: 45 }],
   ["S8", "Pneu T 20,0 → 22,0 psi", "pneu traseiro cheio", { pneu_tras: 22.0 }],
   ["S9", "Asa T 50 → 45", "menos asa (controle)", { asa_traseira: 45 }],
   ["S10", "~8 ajustes de uma vez", "setup sugerido por IA", { asa_traseira: 47, dif_sem_acel: 50, convergencia_diant: 0.08, convergencia_tras: 0.20,
@@ -58,6 +58,12 @@ function carroSVG(cor) {
 
 /* ---------- dados ---------- */
 const D = { voltas: [], am: new Map(), exemplo: false, carregado: false };
+function statAmostras() { // total oficial do estudo (resultados.json) tem prioridade sobre o CSV leve
+  const n = (R && R.dados && isFinite(R.dados.amostras_total)) ? R.dados.amostras_total : D.nAm;
+  if (!isFinite(n) || n <= 0) return;
+  $("stAmostras").textContent = n >= 1e6 ? (n / 1e6).toFixed(2).replace(".", ",") + " M"
+    : (n >= 1000 ? Math.round(n / 1000).toLocaleString("pt-BR") + "k" : String(n));
+}
 const key = (u, v) => u + "|" + v;
 async function existe(u) { try { const r = await fetch(u, { method: "HEAD", cache: "no-store" }); return r.ok; } catch { return false; } }
 async function primeiro(lista) { for (const u of lista) if (await existe(u)) return u; return null; }
@@ -98,7 +104,7 @@ async function carregarDados() {
     }
     D.nAm = n; D.carregado = true;
     $("stVoltas").textContent = D.voltas.length.toLocaleString("pt-BR");
-    $("stAmostras").textContent = n >= 1000 ? Math.round(n / 1000).toLocaleString("pt-BR") + "k" : n;
+    statAmostras();
     $("fonteDados").innerHTML = D.exemplo ? '<span class="ex">● DADOS DE EXEMPLO (sintéticos)</span> — coloque voltas.csv e amostras em <code>data/</code> para ver os seus.'
       : `● dados reais: ${esc(vUrl)}${aUrl ? " + " + esc(aUrl) : ""}`;
     montarTelemetria(); trilhaHero(); ticker(); if (R.dados) ranking();
@@ -202,7 +208,7 @@ function desenhar() {
 /* plugin: rótulo de valor nas barras (importância por permutação) */
 const valorBarraImp = {
   id: "valorBarraImp",
-  afterDraw(chart) {
+  afterDraw(chart, _args, opts) {
     const ctx = chart.ctx;
     chart.data.datasets.forEach((dataset) => {
       const meta = chart.getDatasetMeta(dataset.index);
@@ -217,7 +223,7 @@ const valorBarraImp = {
         ctx.font = "11px JetBrains Mono, monospace";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
-        ctx.fillText(value.toFixed(3), x, y);
+        ctx.fillText(opts && opts.pct ? value.toFixed(1) + "%" : value.toFixed(3), x, y);
         ctx.restore();
       });
     });
@@ -236,16 +242,23 @@ async function carregarResultados() {
   const r = R.dados, cm = r.comparacao_modelos || [];
   const best = cm.find(c => c.modelo === r.melhor_modelo);
   $("rMelhor").textContent = (r.melhor_modelo || "—").replace(/_/g, " ");
-  $("rMae").textContent = best && best.teste ? best.teste.mae.toFixed(3) + " s" : "—";
+  $("rMae").textContent = best && best.cv ? best.cv.mae.toFixed(3) + " s" : (best && best.teste ? best.teste.mae.toFixed(3) + " s" : "—");
   $("rRuido").textContent = isFinite(r.ruido_piloto_s) ? "±" + r.ruido_piloto_s.toFixed(3) + " s" : "—";
+  const bl = cm.find(c => c.modelo === "baseline_media");
+  const ganho = bl && best && best.cv ? Math.round((bl.cv.mae - best.cv.mae) / bl.cv.mae * 100) : null;
+  if ($("notaModelos") && ganho != null)
+    $("notaModelos").innerHTML = `Ordem pelo <b>MAE da validação cruzada</b> por grupos (critério de escolha); teste em sessões nunca vistas. O melhor modelo (<b>${esc(r.melhor_modelo)}</b>) corta o erro em <b>${ganho}%</b> frente à média (baseline).`;
+  statAmostras();
   const base = { color: "#9a9aa6" }, grid = { color: "#1c1c22" };
   R.chM = new Chart($("chModelos"), { type: "bar", data: { labels: cm.map(c => c.modelo.replace(/_/g, " ")), datasets: [
       { label: "CV (validação por blocos)", data: cm.map(c => c.cv?.mae), backgroundColor: "#555" },
       { label: "Teste", data: cm.map(c => c.teste?.mae ?? null), backgroundColor: cm.map(c => c.modelo === r.melhor_modelo ? "#E10600" : "#a33") }] },
     options: { plugins: { legend: { labels: base } }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
-  const imp = (r.importancia || []).slice(0, 10);
-  R.chI = new Chart($("chImp"), { type: "bar", data: { labels: imp.map(i => i.variavel), datasets: [{ label: "aumento do MAE (s)", data: imp.map(i => i.aumento_mae_s), backgroundColor: "#E10600" }] },
-    options: { indexAxis: "y", animation: false, plugins: { legend: { display: false }, valorBarraImp: {} }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
+  const imp = (r.importancia || []).filter(i => (i.percentual != null ? i.percentual > 0 : i.aumento_mae_s > 0)).slice(0, 10);
+  const usaPct = imp.some(i => i.percentual != null);
+  R.chI = new Chart($("chImp"), { type: "bar", data: { labels: imp.map(i => i.rotulo || i.variavel), datasets: [{ label: usaPct ? "participação no total (%)" : "aumento do MAE (s)", data: imp.map(i => usaPct ? i.percentual : i.aumento_mae_s), backgroundColor: "#E10600" }] },
+    options: { indexAxis: "y", animation: false, plugins: { legend: { display: false }, valorBarraImp: { pct: usaPct } }, scales: { x: { ticks: base, grid }, y: { ticks: base, grid } } } });
+  if ($("notaImportancia")) $("notaImportancia").textContent = r.importancia_metodo || "";
   $("rankCarro").onclick = e => { const b = e.target.closest("button"); if (!b) return; R.carro = b.dataset.c;
     [...$("rankCarro").children].forEach(x => x.classList.toggle("on", x === b)); ranking(); };
   ranking(); if (REG.j) resultadosDoRegistro(); else tabelaModelos();
@@ -266,10 +279,12 @@ function ranking() {
     return `<span class="sec-c ${c}" title="S${k + 1}: ${o[k].toFixed(3)} s">${o[k].toFixed(3)}</span>`; };
   const lider = L[0]?.media_real;
   const s0Media = L.find(x => x.setup_id === "S0")?.media_real;
+  const ruido = isFinite(R.dados?.ruido_piloto_s) ? R.dados.ruido_piloto_s : 1.5;
   $("ranking").innerHTML = `<div class="tower" style="--team:${COR_EQ[R.carro]}"><div class="tw head"><span>P</span><span></span><span>Setup</span><span class="ver">Leitura</span><span class="lap">Média</span><span class="gap">Gap</span><span>S1</span><span>S2</span><span>S3</span></div>` +
     L.map((x, i) => {
       const pct = s0Media ? ((s0Media - x.media_real) / s0Media * 100) : null;
-      const pc = pct == null ? "n" : (pct > 0 ? "g" : pct < 0 ? "y" : "n");
+      const dif = s0Media == null ? null : (x.media_real - s0Media);
+      const pc = dif == null || x.setup_id === "S0" ? "n" : (dif <= -ruido ? "g" : (dif >= ruido ? "r" : "y"));
       return `<div class="tw"><span class="pos">${i + 1}</span><span class="tc"></span><span class="sid">${esc(x.setup_id)}${x.setup_id === "S10" ? '<span class="ia">IA</span>' : ""}</span>
       <span class="ver">${esc(x.veredito || (x.setup_id === "S0" ? "referência" : sgn(x.dif_vs_s0) + " vs S0"))}</span>
       <span class="lap">${fmt(x.media_real)}</span><span class="gap ${pc}">${i ? "+" + (x.media_real - lider).toFixed(3) : "LÍDER"}${pct == null ? "" : ` · ${pct > 0 ? "+" : ""}${pct.toFixed(2)}% vs S0`}</span>${[0, 1, 2].map(k => cel(x.setup_id, k)).join("")}</div>`;
@@ -288,17 +303,19 @@ function tabelaModelos() { // formato antigo (resultados.json) — usado só se 
     `</div><p class="mini">Ordem pelo MAE da validação cruzada (critério de escolha). <i class="sx p"></i>modelo escolhido <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>`;
 }
 
-/* ---------- registro de modelos (API /modelos → data/registro.json → data/exemplo/registro.json) ---------- */
+/* ---------- registro de modelos (data/registro.json → API /modelos → data/exemplo) ---------- */
 const REG = { j: null, fonte: "", exemplo: false, alvo: "tempo_s" };
-const ALVO_TXT = { tempo_s: "Tempo", vel_max_kmh: "Vel. máx", vel_media_kmh: "Vel. média" };
+const ALVO_TXT = { tempo_s: "Tempo", vel_max_kmh: "Vel. máxima", vel_media_kmh: "Vel. média" };
 const apiBase = () => (C.API_URL || "").replace(/\/$/, "");
 async function carregarRegistro() {
-  try { const r = await fetch(apiBase() + "/modelos", { signal: AbortSignal.timeout(8000) });
-    if (r.ok) { REG.j = await r.json(); REG.fonte = "API /modelos"; }
-  } catch {}
   for (const [u, ex] of [["data/registro.json", false], ["data/exemplo/registro.json", true]]) {
+    if (await existe(u)) try { REG.j = await (await fetch(u, { cache: "no-store" })).json(); REG.fonte = u; REG.exemplo = ex || !!REG.j.exemplo; break; } catch {}
     if (REG.j) break;
-    if (await existe(u)) try { REG.j = await (await fetch(u, { cache: "no-store" })).json(); REG.fonte = u; REG.exemplo = ex || !!REG.j.exemplo; } catch {}
+  }
+  if (!REG.j) {
+    try { const r = await fetch(apiBase() + "/modelos", { signal: AbortSignal.timeout(8000) });
+      if (r.ok) { REG.j = await r.json(); REG.fonte = "API /modelos"; REG.exemplo = !!REG.j.sintetico; }
+    } catch {}
   }
   if (!REG.j) return false;
   const j = REG.j; j.padrao_por_alvo ??= Object.fromEntries(Object.entries(j.alvos || {}).map(([a, v]) => [a, v.padrao]));
@@ -316,12 +333,15 @@ function resultadosDoRegistro() {
   $("regAlvo").onclick = e => { const b = e.target.closest("button"); if (!b) return; REG.alvo = b.dataset.a;
     [...$("regAlvo").children].forEach(x => x.classList.toggle("on", x === b)); tabelaRegistro(); };
   const p = j.modelos.find(m => m.id === j.padrao_por_alvo.tempo_s);
-  if (p) { $("rMelhor").textContent = nomeM(p); $("rMae").textContent = p.metricas_teste ? p.metricas_teste.mae.toFixed(3) + " s" : "—"; }
+  if (p) { $("rMelhor").textContent = nomeM(p);
+    const mae = (p.metricas_cv && isFinite(p.metricas_cv.mae)) ? p.metricas_cv.mae : (p.metricas_teste || {}).mae;
+    $("rMae").textContent = isFinite(mae) ? mae.toFixed(3) + " s" : "—"; }
   if (isFinite(j.ruido_piloto_s) && j.ruido_piloto_s) $("rRuido").textContent = "±" + j.ruido_piloto_s.toFixed(3) + " s";
   tabelaRegistro();
 }
 function tabelaRegistro() {
   const j = REG.j, a = REG.alvo, un = (j.alvos?.[a]?.unidade) || (a === "tempo_s" ? "s" : "km/h");
+  const nota = (j.alvos?.[a]?.nota) || "";
   const L = j.modelos.filter(m => m.alvo === a).sort((x, y) => x.metricas_cv.mae - y.metricas_cv.mae);
   const base = L.find(m => m.algoritmo === "baseline_media"), pad = j.padrao_por_alvo[a];
   const cls = m => m.id === pad ? "p" : (base && m.metricas_cv.mae < base.metricas_cv.mae ? "g" : "y");
@@ -330,7 +350,8 @@ function tabelaRegistro() {
       return `<div class="tw reg"><span class="pos">${i + 1}</span><span class="sid">${esc(nomeM(m))}</span>
       <span class="sec-c ${cls(m)}">${f3(c.mae)}<small> ±${f3(c.mae_dp, 2)}</small></span><span class="sec-c n hide-m">${f3(c.rmse)}</span>
       <span class="sec-c n">${f3(c.r2, 2)}</span><span class="sec-c n">${f3(t.mae)}</span><span class="sec-c n hide-m">${f3(t.r2, 2)}</span></div>`; }).join("") +
-    `</div><p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>`;
+    `</div>` + (nota ? `<p class="mini"><b>Nota:</b> ${esc(nota)}</p>` : "") +
+    `<p class="mini">Alvo: <b>${esc(j.alvos?.[a]?.descricao || a)}</b> (${un}). Ordem pelo MAE da validação cruzada agrupada (critério de escolha); ± = desvio-padrão entre dobras. <i class="sx p"></i>modelo padrão <i class="sx g"></i>supera o baseline (média) <i class="sx y"></i>não supera o baseline</p>`;
   if (R.chM) { R.chM.data.labels = L.map(nomeM); R.chM.data.datasets = [
       { label: "MAE CV", data: L.map(m => m.metricas_cv.mae), backgroundColor: L.map(m => m.id === pad ? "#a855f7" : "#555") },
       { label: "MAE teste", data: L.map(m => m.metricas_teste?.mae ?? null), backgroundColor: L.map(m => m.id === pad ? "#c084fc" : "#a33") }];
@@ -447,7 +468,7 @@ const FAQ = [
   ["O que é o ruído do piloto?", "A diferença entre o S0 do início e o S0 do fim de cada sessão. Um setup só é considerado melhor se ganhar mais que esse ruído e o teste de Welch der p < 0,05."],
   ["Por que comparar com baselines?", "Um modelo só vale se superar a média (baseline) e o modelo que só conhece o carro. O placebo, com os setups embaralhados, mostra se o modelo aprendeu algo real."],
   ["Por que a telemetria não entra no modelo do simulador?", "Velocidade, freio etc. só existem depois que a volta acontece. Usá-los para prever o tempo é vazamento; eles servem para explicar (trilha B), não para prever (trilha A)."],
-  ["Quais modelos foram testados?", "Lasso, Ridge, Random Forest, XGBoost e LightGBM, com busca de hiperparâmetros em validação cruzada por grupos e escolha pelo menor MAE."],
+  ["Quais modelos foram testados?", "Lasso, Ridge, ElasticNet, Random Forest, Extra Trees, Gradient Boosting, XGBoost e LightGBM — sempre comparados com o baseline (média pura) e com um modelo que só conhece o carro. A escolha é pelo menor MAE na validação cruzada por grupos, com busca de hiperparâmetros."],
   ["Dá para confiar na previsão do S10?", "Com cautela: o S10 tem vários ajustes fora da faixa vista no treino (extrapolação). O simulador avisa quando isso acontece."],
   ["Onde a IA foi usada?", "Para dúvidas de sintaxe e para sugerir o S10, que virou hipótese de teste. Todas as decisões de modelagem foram do grupo e estão justificadas no notebook."],
   ["Como o deploy funciona?", "A página é estática (Vercel). O simulador chama uma API FastAPI que carrega o modelo treinado no notebook (.joblib) e devolve o tempo previsto."]];

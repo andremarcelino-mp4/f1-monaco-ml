@@ -1,0 +1,148 @@
+{
+ "id": "vel_media__elastic_net",
+ "nome": "ElasticNet",
+ "algoritmo": "elastic_net",
+ "alvo": "vel_media_kmh",
+ "alvo_desc": "velocidade média da volta",
+ "unidade": "km/h",
+ "hiperparametros": {
+  "alpha": 1.0,
+  "l1_ratio": 0.8,
+  "fit_intercept": true
+ },
+ "metricas_cv": {
+  "mae": 7.663224325610763,
+  "rmse": 11.625168821943225,
+  "r2": -0.259841866988414,
+  "mae_dp": 1.6357749264679236,
+  "rmse_dp": 2.861293269120923,
+  "r2_dp": 0.4827360130049122
+ },
+ "metricas_teste": {
+  "mae": 8.835462814302291,
+  "rmse": 12.97665461586516,
+  "r2": 0.012097041864846836
+ },
+ "colunas": [
+  "asa_dianteira",
+  "asa_traseira",
+  "dif_com_acel",
+  "dif_sem_acel",
+  "cambagem_diant",
+  "cambagem_tras",
+  "convergencia_diant",
+  "convergencia_tras",
+  "suspensao_diant",
+  "suspensao_tras",
+  "barra_diant",
+  "barra_tras",
+  "altura_diant",
+  "altura_tras",
+  "freio_pressao",
+  "freio_balanco",
+  "pneu_diant",
+  "pneu_tras",
+  "carro",
+  "volta_stint"
+ ],
+ "params_setup": [
+  "asa_dianteira",
+  "asa_traseira",
+  "dif_com_acel",
+  "dif_sem_acel",
+  "cambagem_diant",
+  "cambagem_tras",
+  "convergencia_diant",
+  "convergencia_tras",
+  "suspensao_diant",
+  "suspensao_tras",
+  "barra_diant",
+  "barra_tras",
+  "altura_diant",
+  "altura_tras",
+  "freio_pressao",
+  "freio_balanco",
+  "pneu_diant",
+  "pneu_tras"
+ ],
+ "faixas": {
+  "asa_dianteira": [
+   45.0,
+   50.0
+  ],
+  "asa_traseira": [
+   45.0,
+   50.0
+  ],
+  "dif_com_acel": [
+   50.0,
+   80.0
+  ],
+  "dif_sem_acel": [
+   50.0,
+   80.0
+  ],
+  "cambagem_diant": [
+   -3.5,
+   -2.5
+  ],
+  "cambagem_tras": [
+   -2.0,
+   -1.0
+  ],
+  "convergencia_diant": [
+   0.05,
+   0.05
+  ],
+  "convergencia_tras": [
+   0.1,
+   0.25
+  ],
+  "suspensao_diant": [
+   41.0,
+   41.0
+  ],
+  "suspensao_tras": [
+   11.0,
+   13.0
+  ],
+  "barra_diant": [
+   7.0,
+   15.0
+  ],
+  "barra_tras": [
+   3.0,
+   12.0
+  ],
+  "altura_diant": [
+   30.0,
+   35.0
+  ],
+  "altura_tras": [
+   36.0,
+   45.0
+  ],
+  "freio_pressao": [
+   100.0,
+   100.0
+  ],
+  "freio_balanco": [
+   52.0,
+   62.0
+  ],
+  "pneu_diant": [
+   22.2,
+   22.5
+  ],
+  "pneu_tras": [
+   20.0,
+   20.0
+  ]
+ },
+ "n_treino": 197,
+ "n_teste": 52,
+ "sklearn_versao": "1.9.1",
+ "data": "2026-10-25T20:52:50",
+ "sintetico": false,
+ "treino_s": 0.8
+}

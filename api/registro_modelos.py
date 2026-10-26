@@ -7,9 +7,9 @@ import json, os, re, shutil, time, datetime
 import numpy as np, pandas as pd, joblib, sklearn
 from sklearn.compose import ColumnTransformer
 from sklearn.dummy import DummyRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import ExtraTreesRegressor, GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import Lasso, Ridge, LinearRegression
+from sklearn.linear_model import ElasticNet, Lasso, Ridge, LinearRegression
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
 from sklearn.model_selection import GridSearchCV, cross_validate
 from sklearn.pipeline import Pipeline
@@ -28,8 +28,14 @@ def espaco(num, semente=42):
                       Pipeline([("pre", ColumnTransformer([("c", OneHotEncoder(drop="first", handle_unknown="ignore"), ["carro"])])), ("m", LinearRegression())]), {}),
          "lasso": ("Lasso", Pipeline([("pre", _pre(num)), ("m", Lasso(max_iter=20000))]), {"m__alpha": list(np.logspace(-4, 0, 8))}),
          "ridge": ("Ridge", Pipeline([("pre", _pre(num)), ("m", Ridge())]), {"m__alpha": list(np.logspace(-3, 3, 8))}),
+         "elastic_net": ("ElasticNet", Pipeline([("pre", _pre(num)), ("m", ElasticNet(max_iter=20000))]),
+                         {"m__alpha": list(np.logspace(-4, 0, 8)), "m__l1_ratio": [0.2, 0.5, 0.8]}),
          "random_forest": ("Random Forest", Pipeline([("pre", _pre(num)), ("m", RandomForestRegressor(n_estimators=200, random_state=semente, n_jobs=1))]),
-                           {"m__max_features": [0.3, 0.6, 1.0], "m__min_samples_leaf": [2, 5, 10]})}
+                           {"m__max_features": [0.3, 0.6, 1.0], "m__min_samples_leaf": [2, 5, 10]}),
+         "extra_trees": ("Extra Trees", Pipeline([("pre", _pre(num)), ("m", ExtraTreesRegressor(n_estimators=200, random_state=semente, n_jobs=1))]),
+                         {"m__max_features": [0.3, 0.6, 1.0], "m__min_samples_leaf": [2, 5, 10]}),
+         "gradient_boosting": ("Gradient Boosting", Pipeline([("pre", _pre(num)), ("m", GradientBoostingRegressor(n_estimators=200, random_state=semente))]),
+                               {"m__max_depth": [2, 4], "m__learning_rate": [0.03, 0.1]})}
     try:
         from xgboost import XGBRegressor
         e["xgboost"] = ("XGBoost", Pipeline([("pre", _pre(num)), ("m", XGBRegressor(n_estimators=200, random_state=semente, n_jobs=1, verbosity=0))]),
@@ -51,7 +57,7 @@ def _limpo(v):
 def resumo_params(est):
     m = est.named_steps["m"] if hasattr(est, "named_steps") else est
     p = m.get_params()
-    chaves = ["alpha", "n_estimators", "max_depth", "max_features", "min_samples_leaf", "learning_rate",
+    chaves = ["alpha", "l1_ratio", "n_estimators", "max_depth", "max_features", "min_samples_leaf", "learning_rate",
               "min_child_weight", "num_leaves", "min_child_samples", "strategy", "fit_intercept"]
     return {k: _limpo(p[k]) for k in chaves if k in p and p[k] is not None}
 
@@ -92,13 +98,13 @@ def exportar(treino, teste, cv, params, saida, sintetico, extra=("volta_stint",)
                     "faixas": {c: [float(treino[c].min()), float(treino[c].max())] for c in params},
                     "n_treino": int(len(ytr)), "n_teste": int(len(yte)), "sklearn_versao": sklearn.__version__,
                     "data": reg["gerado_em"], "sintetico": bool(sintetico), "treino_s": round(time.time() - t0, 2)}
-            json.dump(meta, open(os.path.join(saida, mid, "meta.json"), "w"), ensure_ascii=False, indent=1)
+            json.dump(meta, open(os.path.join(saida, mid, "meta.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
             reg["modelos"].append({k: meta[k] for k in ["id", "nome", "algoritmo", "alvo", "unidade", "metricas_cv", "metricas_teste", "hiperparametros"]})
             ids.append((cvm["mae"], nome, mid)); log(f"{mid:32s} CV MAE {cvm['mae']:.3f} ± {cvm['mae_dp']:.3f}")
         cand = [x for x in ids if x[1] not in ("baseline_media", "so_carro")] or ids
         reg["alvos"][alvo] = {"descricao": ALVOS[alvo][0], "unidade": ALVOS[alvo][1], "padrao": min(cand)[2]}
     reg["padrao"] = reg["alvos"].get("tempo_s", {}).get("padrao")
-    json.dump(reg, open(os.path.join(saida, "registro.json"), "w"), ensure_ascii=False, indent=1)
+    json.dump(reg, open(os.path.join(saida, "registro.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     log(f"Registro: {os.path.join(saida, 'registro.json')} | padrão tempo = {reg['padrao']}")
     return reg
 

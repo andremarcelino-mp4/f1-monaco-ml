@@ -2,73 +2,9 @@
  "exemplo": false,
  "aviso": "",
  "melhor_modelo": "lasso",
+ "melhor_modelo_id": "tempo__lasso",
  "ruido_piloto_s": 1.5178863636363644,
  "comparacao_modelos": [
-  {
-   "modelo": "lasso",
-   "cv": {
-    "mae": 1.1034706939579013,
-    "rmse": 1.388357672660782,
-    "r2": 0.033440639843026566
-   },
-   "teste": {
-    "mae": 1.1843580644773155,
-    "rmse": 1.4909317957264556,
-    "r2": -0.04519428757723398
-   }
-  },
-  {
-   "modelo": "ridge",
-   "cv": {
-    "mae": 1.1516282087203982,
-    "rmse": 1.423018758307849,
-    "r2": -0.027732536719970134
-   },
-   "teste": {
-    "mae": 1.1661235528583864,
-    "rmse": 1.470744735442175,
-    "r2": -0.017082259489803908
-   }
-  },
-  {
-   "modelo": "random_forest",
-   "cv": {
-    "mae": 1.1548078260877777,
-    "rmse": 1.449138350171926,
-    "r2": -0.038432695608421864
-   },
-   "teste": {
-    "mae": 1.0309578379028752,
-    "rmse": 1.335838918583704,
-    "r2": 0.16094649013786155
-   }
-  },
-  {
-   "modelo": "xgboost",
-   "cv": {
-    "mae": 1.1615890577924157,
-    "rmse": 1.478360570770318,
-    "r2": -0.08881026132061183
-   },
-   "teste": {
-    "mae": 1.1028049668532147,
-    "rmse": 1.408139612902405,
-    "r2": 0.0676630290501059
-   }
-  },
-  {
-   "modelo": "lightgbm",
-   "cv": {
-    "mae": 1.1888829788827464,
-    "rmse": 1.477698962935173,
-    "r2": -0.11051488658088904
-   },
-   "teste": {
-    "mae": 1.0716350904292555,
-    "rmse": 1.3793808040743067,
-    "r2": 0.10535687272303418
-   }
-  },
   {
    "modelo": "baseline_media",
    "cv": {
@@ -76,6 +12,7 @@
     "rmse": 1.5540398887183258,
     "r2": -0.1812619173614299
    },
+   "cv_dp": 0.21140475109335763,
    "teste": {
     "mae": 1.250847325263569,
     "rmse": 1.5146225453022608,
@@ -89,6 +26,7 @@
     "rmse": 1.5610551206527783,
     "r2": -0.19842701815938835
    },
+   "cv_dp": 0.19859677315526097,
    "teste": {
     "mae": 1.2494143991877658,
     "rmse": 1.5096874387267263,
@@ -96,317 +34,611 @@
    }
   },
   {
+   "modelo": "lasso",
+   "cv": {
+    "mae": 1.102354302319227,
+    "rmse": 1.3891921821706545,
+    "r2": 0.03395527020210944
+   },
+   "cv_dp": 0.08710127626959367,
+   "teste": {
+    "mae": 1.1834201118813605,
+    "rmse": 1.4886644968223388,
+    "r2": -0.04201779622374158
+   }
+  },
+  {
+   "modelo": "ridge",
+   "cv": {
+    "mae": 1.151628208719341,
+    "rmse": 1.4230187583043619,
+    "r2": -0.027732536715104873
+   },
+   "cv_dp": 0.10538857300346229,
+   "teste": {
+    "mae": 1.1661235528584675,
+    "rmse": 1.4707447354422647,
+    "r2": -0.017082259489928253
+   }
+  },
+  {
+   "modelo": "elastic_net",
+   "cv": {
+    "mae": 1.108124869752092,
+    "rmse": 1.3928702940397817,
+    "r2": 0.027286784402023277
+   },
+   "cv_dp": 0.08433985830130714,
+   "teste": {
+    "mae": 1.1853487907946143,
+    "rmse": 1.4908517864573854,
+    "r2": -0.045082112107644345
+   }
+  },
+  {
+   "modelo": "random_forest",
+   "cv": {
+    "mae": 1.1524389848182994,
+    "rmse": 1.4449784652021198,
+    "r2": -0.03346417928918495
+   },
+   "cv_dp": 0.21413426696377344,
+   "teste": {
+    "mae": 1.030457353434993,
+    "rmse": 1.3369000322870332,
+    "r2": 0.15961296888956944
+   }
+  },
+  {
+   "modelo": "extra_trees",
+   "cv": {
+    "mae": 1.1552651719880633,
+    "rmse": 1.425479291227799,
+    "r2": -0.000403558790179237
+   },
+   "cv_dp": 0.13471179415483114,
+   "teste": {
+    "mae": 1.1452161124368676,
+    "rmse": 1.4302684115959206,
+    "r2": 0.038129582084868496
+   }
+  },
+  {
+   "modelo": "gradient_boosting",
+   "cv": {
+    "mae": 1.1480557352118084,
+    "rmse": 1.4509569284170873,
+    "r2": -0.04184954344801377
+   },
+   "cv_dp": 0.14817081202276144,
+   "teste": {
+    "mae": 1.0986319961444453,
+    "rmse": 1.403438690253019,
+    "r2": 0.0738776516867804
+   }
+  },
+  {
+   "modelo": "xgboost",
+   "cv": {
+    "mae": 1.1606599268268927,
+    "rmse": 1.4665132741253428,
+    "r2": -0.06518114612626195
+   },
+   "cv_dp": 0.1699280369120497,
+   "teste": {
+    "mae": 1.0899999049260063,
+    "rmse": 1.3928783127057351,
+    "r2": 0.08776269768046696
+   }
+  },
+  {
+   "modelo": "lightgbm",
+   "cv": {
+    "mae": 1.1774611312288703,
+    "rmse": 1.4671108006367874,
+    "r2": -0.08885672758709376
+   },
+   "cv_dp": 0.21464481179068,
+   "teste": {
+    "mae": 1.0857158943674503,
+    "rmse": 1.3857902646090214,
+    "r2": 0.0970234203774013
+   }
+  },
+  {
    "modelo": "placebo_setup_embaralhado",
    "cv": {
-    "mae": 1.2830958662305796,
-    "rmse": 1.576872230314843,
-    "r2": -0.23630538761307554
+    "mae": 1.2632885012791928,
+    "rmse": 1.5355954622403494,
+    "r2": -0.16723023608794638
    },
+   "cv_dp": 0.21244576259391235,
    "teste": null
   }
  ],
  "importancia": [
   {
-   "variavel": "volta_stint",
-   "aumento_mae_s": 0.04572917196634444
+   "variavel": "dif_sem_acel",
+   "rotulo": "diferencial sem aceleração",
+   "aumento_mae_s": 0.14633387873395598,
+   "percentual": 50.8
   },
   {
    "variavel": "carro",
-   "aumento_mae_s": 0.04497373270964429
-  },
-  {
-   "variavel": "asa_dianteira",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "dif_com_acel",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "suspensao_tras",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "asa_traseira",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "cambagem_diant",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "cambagem_tras",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "convergencia_tras",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "suspensao_diant",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "convergencia_diant",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "dif_sem_acel",
-   "aumento_mae_s": 0.0
+   "rotulo": "carro",
+   "aumento_mae_s": 0.055226996374115586,
+   "percentual": 19.2
   },
   {
    "variavel": "freio_balanco",
-   "aumento_mae_s": 0.0
+   "rotulo": "balanço de freio",
+   "aumento_mae_s": 0.03419112133259009,
+   "percentual": 11.9
   },
   {
-   "variavel": "barra_diant",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "barra_tras",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "altura_diant",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "pneu_tras",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "freio_pressao",
-   "aumento_mae_s": 0.0
-  },
-  {
-   "variavel": "pneu_diant",
-   "aumento_mae_s": 0.0
+   "variavel": "volta_stint",
+   "rotulo": "idade do pneu (volta no stint)",
+   "aumento_mae_s": 0.033486255551135206,
+   "percentual": 11.6
   },
   {
    "variavel": "altura_tras",
-   "aumento_mae_s": -0.018724493465462556
+   "rotulo": "altura do piso traseira",
+   "aumento_mae_s": 0.00936442569173525,
+   "percentual": 3.2
+  },
+  {
+   "variavel": "convergencia_tras",
+   "rotulo": "convergência traseira",
+   "aumento_mae_s": 0.007040078988192048,
+   "percentual": 2.4
+  },
+  {
+   "variavel": "cambagem_diant",
+   "rotulo": "cambagem dianteira",
+   "aumento_mae_s": 0.0025272311274603903,
+   "percentual": 0.9
+  },
+  {
+   "variavel": "cambagem_tras",
+   "rotulo": "cambagem traseira",
+   "aumento_mae_s": 7.401486830834377e-18,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "asa_dianteira",
+   "rotulo": "asa dianteira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "asa_traseira",
+   "rotulo": "asa traseira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "convergencia_diant",
+   "rotulo": "convergência dianteira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "suspensao_diant",
+   "rotulo": "suspensão dianteira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "suspensao_tras",
+   "rotulo": "suspensão traseira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "altura_diant",
+   "rotulo": "altura do piso dianteira",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "freio_pressao",
+   "rotulo": "pressão do freio",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "pneu_diant",
+   "rotulo": "pressão do pneu dianteiro",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "pneu_tras",
+   "rotulo": "pressão do pneu traseiro",
+   "aumento_mae_s": 0.0,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "barra_tras",
+   "rotulo": "barra traseira",
+   "aumento_mae_s": -0.00019505073405805539,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "dif_com_acel",
+   "rotulo": "diferencial com aceleração",
+   "aumento_mae_s": -0.00021987124189154123,
+   "percentual": 0.0
+  },
+  {
+   "variavel": "barra_diant",
+   "rotulo": "barra dianteira",
+   "aumento_mae_s": -0.0014104914847773505,
+   "percentual": 0.0
   }
  ],
+ "importancia_metodo": "Permutação de cada variável no conjunto de modelagem S0–S9 (249 linhas) com o modelo vencedor (lasso); MAE a quantidade que cada permutação piora o erro. O teste guarda só S7–S9, onde a maioria dos ajustes não varia, por isso a medida é S0–S9.",
  "ranking": [
   {
    "carro": "alfaromeo",
    "setup_id": "S10",
    "n": 12,
    "media_real": 77.59616666666666,
+   "dp": 0.8667677505152895,
    "dif_vs_s0": -1.55446969696969,
-   "previsto_medio": 79.04939420978705,
+   "p_welch": 0.005342740479025422,
    "veredito": "mais rápido",
-   "p_welch": 0.005342740479025422
+   "no_treino": false,
+   "previsto_medio": 79.00426996782038,
+   "origem_previsao": "S10 (nunca visto)",
+   "posicao": 1,
+   "erro_previsao": 1.4081033011537158
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S1",
    "n": 11,
    "media_real": 77.92490909090908,
+   "dp": 1.104647586748413,
    "dif_vs_s0": -1.2257272727272692,
-   "previsto_medio": 78.3761707007656,
+   "p_welch": 0.03284004429934696,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.03284004429934696
+   "no_treino": true,
+   "previsto_medio": 78.3742983351432,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 2,
+   "erro_previsao": 0.4493892442341121
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S3",
    "n": 11,
    "media_real": 78.05518181818182,
+   "dp": 1.3051915428918346,
    "dif_vs_s0": -1.0954545454545297,
-   "previsto_medio": 78.757980388191,
+   "p_welch": 0.07015082042775521,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.07015082042775521
+   "no_treino": true,
+   "previsto_medio": 78.73588052936057,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 3,
+   "erro_previsao": 0.6806987111787492
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S9",
    "n": 13,
    "media_real": 78.132,
+   "dp": 1.1625021146934174,
    "dif_vs_s0": -1.0186363636363467,
-   "previsto_medio": 78.66773150847942,
+   "p_welch": 0.06734186161081451,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.06734186161081451
+   "no_treino": false,
+   "previsto_medio": 78.6322668564385,
+   "origem_previsao": "teste",
+   "posicao": 4,
+   "erro_previsao": 0.5002668564385004
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S6",
    "n": 11,
    "media_real": 78.15109090909091,
+   "dp": 1.0615518314755485,
    "dif_vs_s0": -0.9995454545454407,
-   "previsto_medio": 78.65982652114671,
+   "p_welch": 0.07222421438798603,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.07222421438798603
+   "no_treino": true,
+   "previsto_medio": 78.64541870233359,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 5,
+   "erro_previsao": 0.4943277932426753
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S8",
    "n": 12,
    "media_real": 78.57558333333333,
+   "dp": 1.9893261745595865,
    "dif_vs_s0": -0.5750530303030246,
-   "previsto_medio": 78.62712693092215,
+   "p_welch": 0.42704115698298134,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.42704115698298134
+   "no_treino": false,
+   "previsto_medio": 78.59237755606902,
+   "origem_previsao": "teste",
+   "posicao": 6,
+   "erro_previsao": 0.016794222735697417
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S4",
    "n": 11,
    "media_real": 78.6119090909091,
+   "dp": 1.1004049667777271,
    "dif_vs_s0": -0.5387272727272574,
-   "previsto_medio": 78.52719054127456,
+   "p_welch": 0.32385644968181637,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.32385644968181637
+   "no_treino": true,
+   "previsto_medio": 78.48126462197021,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 7,
+   "erro_previsao": -0.1306444689388826
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S5",
    "n": 13,
    "media_real": 78.7743076923077,
+   "dp": 0.8910182737197718,
    "dif_vs_s0": -0.37632867132865044,
-   "previsto_medio": 77.78677487517405,
+   "p_welch": 0.4474940929092997,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.4474940929092997
+   "no_treino": true,
+   "previsto_medio": 77.77965150819581,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 8,
+   "erro_previsao": -0.9946561841118893
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S7",
    "n": 12,
    "media_real": 79.11016666666667,
+   "dp": 1.0618975154568049,
    "dif_vs_s0": -0.04046969696968006,
-   "previsto_medio": 78.70689013173087,
+   "p_welch": 0.9383838438325687,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.9383838438325687
+   "no_treino": true,
+   "previsto_medio": 78.69183891963748,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 9,
+   "erro_previsao": -0.4183277470291955
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S0",
    "n": 11,
    "media_real": 79.15063636363635,
+   "dp": 1.378998569450111,
    "dif_vs_s0": 0.0,
-   "previsto_medio": 78.26186987740624,
+   "p_welch": null,
    "veredito": "referência",
-   "p_welch": null
+   "no_treino": true,
+   "previsto_medio": 78.25424675209175,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 10,
+   "erro_previsao": -0.8963896115446062
   },
   {
    "carro": "alfaromeo",
    "setup_id": "S2",
    "n": 12,
    "media_real": 81.0785,
+   "dp": 1.5561240602564743,
    "dif_vs_s0": 1.9278636363636537,
-   "previsto_medio": 79.90933527473737,
+   "p_welch": 0.004840272537916945,
    "veredito": "mais lento",
-   "p_welch": 0.004840272537916945
+   "no_treino": true,
+   "previsto_medio": 79.86952216146811,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 11,
+   "erro_previsao": -1.2089778385318937
   },
   {
    "carro": "ferrari",
    "setup_id": "S10",
    "n": 12,
    "media_real": 76.76733333333333,
+   "dp": 1.4462559394603147,
    "dif_vs_s0": -1.5354607843137416,
-   "previsto_medio": 78.47791502322573,
+   "p_welch": 0.004398036331392149,
    "veredito": "mais rápido",
-   "p_welch": 0.004398036331392149
+   "no_treino": false,
+   "previsto_medio": 78.45463798907289,
+   "origem_previsao": "S10 (nunca visto)",
+   "posicao": 1,
+   "erro_previsao": 1.6873046557395668
   },
   {
    "carro": "ferrari",
    "setup_id": "S9",
    "n": 9,
    "media_real": 77.3662222222222,
+   "dp": 1.3491686123107258,
    "dif_vs_s0": -0.9365718954248621,
-   "previsto_medio": 77.93383401168899,
+   "p_welch": 0.08424380870541456,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.08424380870541456
+   "no_treino": false,
+   "previsto_medio": 77.92307767621311,
+   "origem_previsao": "teste",
+   "posicao": 2,
+   "erro_previsao": 0.5568554539909059
   },
   {
    "carro": "ferrari",
    "setup_id": "S5",
    "n": 12,
    "media_real": 77.43499999999999,
+   "dp": 1.5051961515182846,
    "dif_vs_s0": -0.8677941176470796,
-   "previsto_medio": 78.1580625388681,
+   "p_welch": 0.0906731726000738,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.0906731726000738
+   "no_treino": true,
+   "previsto_medio": 78.16245559447107,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 3,
+   "erro_previsao": 0.7274555944710812
   },
   {
    "carro": "ferrari",
    "setup_id": "S7",
    "n": 9,
    "media_real": 77.77888888888889,
+   "dp": 0.9630572989760817,
    "dif_vs_s0": -0.5239052287581814,
-   "previsto_medio": 78.38226769875502,
+   "p_welch": 0.19169928861571905,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.19169928861571905
+   "no_treino": false,
+   "previsto_medio": 78.39866653892223,
+   "origem_previsao": "teste",
+   "posicao": 4,
+   "erro_previsao": 0.6197776500333418
   },
   {
    "carro": "ferrari",
    "setup_id": "S1",
    "n": 14,
    "media_real": 77.87557142857143,
+   "dp": 1.011937799417587,
    "dif_vs_s0": -0.4272226890756343,
-   "previsto_medio": 77.38828102983753,
+   "p_welch": 0.2225484819291811,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.2225484819291811
+   "no_treino": true,
+   "previsto_medio": 77.44171278968841,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 5,
+   "erro_previsao": -0.4338586388830237
   },
   {
    "carro": "ferrari",
    "setup_id": "S3",
    "n": 11,
    "media_real": 77.94263636363637,
+   "dp": 1.611170461045464,
    "dif_vs_s0": -0.36015775401070016,
-   "previsto_medio": 78.01769451032375,
+   "p_welch": 0.5075030550280738,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.5075030550280738
+   "no_treino": true,
+   "previsto_medio": 78.02310357680943,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 6,
+   "erro_previsao": 0.08046721317306549
   },
   {
    "carro": "ferrari",
    "setup_id": "S6",
    "n": 11,
    "media_real": 78.176,
+   "dp": 1.759762768102564,
    "dif_vs_s0": -0.12679411764706572,
-   "previsto_medio": 77.60159750770282,
+   "p_welch": 0.8276065930751276,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.8276065930751276
+   "no_treino": true,
+   "previsto_medio": 77.63319949382772,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 7,
+   "erro_previsao": -0.5428005061722843
   },
   {
    "carro": "ferrari",
    "setup_id": "S0",
    "n": 34,
    "media_real": 78.30279411764707,
+   "dp": 1.2283187025832765,
    "dif_vs_s0": 0.0,
-   "previsto_medio": 78.49822909460705,
+   "p_welch": null,
    "veredito": "referência",
-   "p_welch": null
+   "no_treino": true,
+   "previsto_medio": 78.42254969577826,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 8,
+   "erro_previsao": 0.11975557813119053
   },
   {
    "carro": "ferrari",
    "setup_id": "S8",
    "n": 9,
    "media_real": 78.76433333333333,
+   "dp": 1.4369462411656169,
    "dif_vs_s0": 0.46153921568625833,
-   "previsto_medio": 77.93383401168899,
+   "p_welch": 0.39613933845558014,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.39613933845558014
+   "no_treino": false,
+   "previsto_medio": 77.92307767621311,
+   "origem_previsao": "teste",
+   "posicao": 9,
+   "erro_previsao": -0.8412556571202146
   },
   {
    "carro": "ferrari",
    "setup_id": "S4",
    "n": 12,
    "media_real": 78.87983333333334,
+   "dp": 1.8871498872558325,
    "dif_vs_s0": 0.5770392156862698,
-   "previsto_medio": 78.03639184779166,
+   "p_welch": 0.33946155479168005,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.33946155479168005
+   "no_treino": true,
+   "previsto_medio": 78.01815941772433,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 10,
+   "erro_previsao": -0.8616739156090034
   },
   {
    "carro": "ferrari",
    "setup_id": "S2",
    "n": 11,
    "media_real": 79.3969090909091,
+   "dp": 1.3805315247791679,
    "dif_vs_s0": 1.0941149732620374,
-   "previsto_medio": 80.37755335231186,
+   "p_welch": 0.03271876823504959,
    "veredito": "empate (dentro do ruído)",
-   "p_welch": 0.03271876823504959
+   "no_treino": true,
+   "previsto_medio": 80.3825425412122,
+   "origem_previsao": "CV (fora da dobra)",
+   "posicao": 11,
+   "erro_previsao": 0.9856334503030979
   }
- ]
+ ],
+ "dataset": {
+  "voltas_dataset": 277,
+  "voltas_modeladas": 273,
+  "amostras_telemetria": 1543167,
+  "melhor_volta_s": 74.575,
+  "melhor_volta_fonte": {
+   "carro": "ferrari",
+   "setup_id": "S10"
+  },
+  "vmax_kmh": 289.0,
+  "setups": [
+   "S0",
+   "S1",
+   "S2",
+   "S3",
+   "S4",
+   "S5",
+   "S6",
+   "S7",
+   "S8",
+   "S9",
+   "S10"
+  ],
+  "carros": [
+   "alfaromeo",
+   "ferrari"
+  ],
+  "split": "grupo: sessoes [5, 3] no teste (treino 197 / teste 52 / S10 24)"
+ },
+ "amostras_total": 1543167
 }

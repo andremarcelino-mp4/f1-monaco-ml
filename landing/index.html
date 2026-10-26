@@ -161,16 +161,18 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
     <div class="aviso-ex" id="avisoRes" hidden></div>
     <div class="res-top reveal">
       <div class="card big-num"><span>Melhor modelo</span><b id="rMelhor">—</b></div>
-      <div class="card big-num"><span>MAE no teste</span><b id="rMae">—</b><small>erro médio por volta</small></div>
+      <div class="card big-num"><span>MAE (CV)</span><b id="rMae">—</b><small>erro médio por volta</small></div>
       <div class="card big-num"><span>Ruído do piloto</span><b id="rRuido">—</b><small>régua: setup precisa superar isso</small></div>
     </div>
     <div class="card reveal"><div class="rank-head"><h4>Classificação dos modelos <span class="mini" id="regFonte"></span></h4><div class="seg" id="regAlvo"></div></div><div id="tabModelos" class="timing"></div></div>
     <div class="res-grid reveal">
-      <div class="card"><h4 id="chModelosT">Comparação de modelos (MAE, s — menor é melhor)</h4><canvas id="chModelos" height="220"></canvas></div>
-      <div class="card"><h4>O que mais pesa no tempo (importância por permutação)</h4><canvas id="chImp" height="220"></canvas></div>
+      <div class="card"><h4 id="chModelosT">Comparação de modelos (MAE, s — menor é melhor)</h4><canvas id="chModelos" height="220"></canvas>
+        <p class="mini" id="notaModelos">Ordem pelo <b>MAE da validação cruzada</b> por grupos (critério de escolha); a coluna de teste usa sessões nunca vistas.</p></div>
+      <div class="card"><h4>O que mais pesa no tempo (importância por permutação)</h4><canvas id="chImp" height="220"></canvas>
+        <p class="mini" id="notaImportancia"></p></div>
     </div>
 
-    <div class="card reveal"><div class="rank-head"><h4>Timing tower · setups vs S0</h4><p class="mono mini legenda-setor"><i class="sx p"></i>melhor do carro <i class="sx g"></i>melhor que S0 <i class="sx y"></i>pior que S0</p><div class="seg" id="rankCarro"><button data-c="ferrari" class="on">Ferrari</button><button data-c="alfaromeo">Alfa Romeo</button></div></div><div id="ranking"></div></div>
+    <div class="card reveal"><div class="rank-head"><h4>Timing tower · setups vs S0</h4><p class="mono mini legenda-setor"><i class="sx p"></i>melhor do carro <i class="sx g"></i>melhor que S0 (fora do ruído) <i class="sx y"></i>dentro do ruído <i class="sx r"></i>pior que S0 (fora do ruído)</p><div class="seg" id="rankCarro"><button data-c="ferrari" class="on">Ferrari</button><button data-c="alfaromeo">Alfa Romeo</button></div></div><div id="ranking"></div></div>
   </div>
 </section>
 
