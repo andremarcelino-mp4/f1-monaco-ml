@@ -315,8 +315,27 @@ select,input[type=number]{border-radius:3px;font-family:var(--f-mono)}
 
 /* telemetria mobile (seção 3) */
 .nota-estudo{margin:0 0 22px;max-width:72ch}
-.meth-prose{max-width:72ch;margin-bottom:0}
-.meth-prose p+p{margin-top:14px}
+.meth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:28px}
+.meth-grid .step{margin-left:-1px}
+.meth-grid .step:nth-child(4n+1){margin-left:0;border-radius:var(--r) 0 0 0}
+.meth-grid .step:nth-child(4n){border-radius:0 var(--r) 0 0}
+.meth-grid .step:nth-child(n+5):nth-child(4n+1){border-radius:0 0 0 var(--r)}
+.meth-grid .step:nth-child(n+5):nth-child(4n){border-radius:0 0 var(--r) 0}
+.meth-grid .step:not(:last-child)::after{display:none}
+.meth-grid .step:nth-child(-n+3)::after{display:block;content:"";position:absolute;right:-9px;top:50%;width:16px;height:16px;background:var(--red);transform:translateY(-50%) rotate(45deg);z-index:2;border-radius:3px}
+.meth-out{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 26px;max-width:none}
+.meth-out h3{font-family:var(--f-head);text-transform:uppercase;letter-spacing:.08em;font-size:1rem;margin-bottom:12px}
+.meth-out ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px}
+.meth-out li{font-size:.95rem;color:#c9c9d1}
+.meth-out b{color:var(--txt)}
+@media (max-width:980px){
+  .meth-grid{grid-template-columns:1fr}
+  .meth-grid .step{margin-left:0;border-radius:0}
+  .meth-grid .step:first-child{border-radius:var(--r) var(--r) 0 0}
+  .meth-grid .step:last-child{border-radius:0 0 var(--r) var(--r)}
+  .meth-grid .step::after{display:none}
+  .meth-out ul{grid-template-columns:1fr}
+}
 @media (max-width:980px){
   .tel-ctrl{flex-direction:column;align-items:stretch}
   .tel-ctrl label{align-items:flex-start}

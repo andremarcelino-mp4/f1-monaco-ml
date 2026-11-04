@@ -222,11 +222,25 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
 <!-- METODOLOGIA -->
 <section id="metodologia" class="sec dark2">
   <div class="wrap">
-    <div class="sec-head"><span class="num">07</span><div><p class="kicker">Metodologia</p><h2 class="big">O desenho<br>e o que ficou de fora</h2></div></div>
-    <div class="meth-prose reveal">
-      <p>O pipeline é curto de propósito. Pacotes UDP na porta 20777 viram <code>voltas.csv</code> (uma linha por volta) e <code>amostras.csv</code> (~20 Hz). As sessões foram Grande Prêmio, treino livre, pista seca, desempenho real dos carros. S0 é a base; S1 a S9 mudam um fator; S10 muda vários de uma vez. A modelagem usa 273 voltas de Ferrari e Alfa, 24 preditores decididos <em>antes</em> da volta, GroupKFold por sessão e um consenso de seis importâncias.</p>
-      <p>Outras ideias existiram e foram recusadas: Time Trial (apagaria o efeito do carro, ~15% da importância); fatorial nos 18 parâmetros (inviável com um piloto); jogar fora flashback/saída/box (a amostra já é pequena); KFold aleatório (vaza sessão); usar velocidade no túnel para prever o tempo (vazamento); só árvores ou só MLP (~270 linhas); LSTM nas amostras (outra pergunta); um único ranking de impureza.</p>
-      <p class="mini">Texto completo: <a href="https://github.com/andremarcelino-mp4/f1-ml-monaco/blob/main/artigo/ARTIGO_ABNT_ENGENHEIRO_CORRIDA_VIRTUAL.md" target="_blank" rel="noopener">artigo ABNT, seção 2.6</a>.</p>
+    <div class="sec-head"><span class="num">07</span><div><p class="kicker">Metodologia</p><h2 class="big">Como o projeto<br>foi feito</h2></div></div>
+    <div class="meth-grid reveal">
+      <div class="step"><i>01</i><h4>Pista e regras</h4><p>Mônaco, Grande Prêmio, treino livre, pista seca. Desempenho real dos carros ligado: Time Trial igualaria as equipes e apagaria o efeito Ferrari (~15% da importância).</p></div>
+      <div class="step"><i>02</i><h4>Captura UDP</h4><p><code>capturar_telemetria.py</code> escuta a porta 20777 e decodifica Motion, Lap, Telemetry, Setups e History. Sai <code>voltas.csv</code> (uma linha por volta) e <code>amostras.csv</code> (~20 Hz).</p></div>
+      <div class="step"><i>03</i><h4>Desenho S0–S10</h4><p>Ferrari e Alfa Romeo. S0 é a base; S1 a S9 mudam um fator; S10 muda vários de uma vez (sugestão de IA). O S0 roda no início e no fim da sessão para medir o ruído do piloto.</p></div>
+      <div class="step"><i>04</i><h4>Amostra</h4><p>277 voltas no CSV; 273 na modelagem (Ferrari + Alfa; McLaren de fora). Saída, box e flashback entram como contexto — jogá-los fora encolheria demais a amostra.</p></div>
+      <div class="step"><i>05</i><h4>O que entra no modelo</h4><p>24 preditores decididos <em>antes</em> da volta: 18 de acerto, contexto (pneu, flashback…) e o carro. Tempo de setor e velocidade no túnel ficam de fora: isso vazaria o alvo.</p></div>
+      <div class="step"><i>06</i><h4>Validação</h4><p>GroupKFold por sessão (nada de misturar voltas do mesmo dia), hold-out de 20% das sessões, busca de hiperparâmetros só dentro do treino. Métrica: MAE, sempre contra a média e contra “só o carro”.</p></div>
+      <div class="step"><i>07</i><h4>Importância e testes</h4><p>Seis rankings viram um consenso (idade do pneu, diferencial s/ acel., carro). Comparação de acertos: Mann-Whitney, e só conta se ganhar do ruído do piloto (~1,26 s).</p></div>
+      <div class="step"><i>08</i><h4>Do notebook à página</h4><p>Treino no Colab, API FastAPI, esta landing. O artigo reporta ElasticNet tunado com MAE 1,008 s. Os .joblib da API podem ser sintéticos — não misture os dois números.</p></div>
+    </div>
+    <div class="meth-out reveal">
+      <h3>O que não foi o desenho</h3>
+      <ul>
+        <li><b>Time Trial</b> — iguala os carros e some com o efeito de equipe.</li>
+        <li><b>Fatorial 2¹⁸</b> — dezoito parâmetros × dez voltas × um piloto não cabe no tempo.</li>
+        <li><b>KFold aleatório</b> — vaza sessão (mesmo pneu, mesmo dia) e o MAE cai à toa.</li>
+        <li><b>LSTM nas amostras</b> — diria onde o tempo se perde, não qual acerto escolher no box.</li>
+      </ul>
     </div>
   </div>
 </section>
