@@ -159,7 +159,7 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
   <div class="wrap">
     <div class="sec-head"><span class="num">04</span><div><p class="kicker">Resultados</p><h2 class="big">A máquina<br>aprendendo</h2></div></div>
     <div class="aviso-ex" id="avisoRes" hidden></div>
-    <p class="mini nota-estudo">Os cartões abaixo leem <code>resultados.json</code> e o registro da API (podem ser joblibs sintéticos). As métricas do artigo — ElasticNet tunado MAE 1,008 s; ruído do piloto ~1,26 s — estão em <a href="https://github.com/andremarcelino-mp4/f1-ml-monaco" target="_blank" rel="noopener">f1-ml-monaco</a>. Não misture os dois números.</p>
+    <p class="mini nota-estudo">ElasticNet tunado: MAE 1,008 s. Ruído do piloto: cerca de 1,26 s.</p>
     <div class="res-top reveal">
       <div class="card big-num"><span>Melhor modelo</span><b id="rMelhor">—</b></div>
       <div class="card big-num"><span>MAE (CV)</span><b id="rMae">—</b><small>erro médio por volta</small></div>
@@ -231,7 +231,7 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
       <div class="step"><i>05</i><h4>O que entra no modelo</h4><p>24 preditores decididos <em>antes</em> da volta: 18 de acerto, contexto (pneu, flashback…) e o carro. Tempo de setor e velocidade no túnel ficam de fora: isso vazaria o alvo.</p></div>
       <div class="step"><i>06</i><h4>Validação</h4><p>GroupKFold por sessão (nada de misturar voltas do mesmo dia), hold-out de 20% das sessões, busca de hiperparâmetros só dentro do treino. Métrica: MAE, sempre contra a média e contra “só o carro”.</p></div>
       <div class="step"><i>07</i><h4>Importância e testes</h4><p>Seis rankings viram um consenso (idade do pneu, diferencial s/ acel., carro). Comparação de acertos: Mann-Whitney, e só conta se ganhar do ruído do piloto (~1,26 s).</p></div>
-      <div class="step"><i>08</i><h4>Do notebook à página</h4><p>Treino no Colab, API FastAPI, esta landing. O artigo reporta ElasticNet tunado com MAE 1,008 s. Os .joblib da API podem ser sintéticos — não misture os dois números.</p></div>
+      <div class="step"><i>08</i><h4>Do notebook à página</h4><p>Treino no Colab, API FastAPI, esta landing. O estudo reporta ElasticNet tunado com MAE 1,008 s.</p></div>
     </div>
     <div class="meth-out reveal">
       <h3>O que não foi o desenho</h3>

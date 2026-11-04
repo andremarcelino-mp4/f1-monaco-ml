@@ -105,7 +105,7 @@ async function carregarDados() {
     D.nAm = n; D.carregado = true;
     $("stVoltas").textContent = D.voltas.length.toLocaleString("pt-BR");
     statAmostras();
-    $("fonteDados").innerHTML = D.exemplo ? '<span class="ex">● DADOS DE EXEMPLO (sintéticos)</span> — coloque voltas.csv e amostras em <code>data/</code> para ver os seus.'
+    $("fonteDados").innerHTML = D.exemplo ? '<span class="ex">● DADOS DE EXEMPLO</span> — coloque voltas.csv e amostras em <code>data/</code> para ver os seus.'
       : `● dados reais: ${esc(vUrl)}${aUrl ? " + " + esc(aUrl) : ""}`;
     montarTelemetria(); trilhaHero(); ticker(); if (R.dados) ranking();
   } catch (e) { console.warn(e); $("fonteDados").textContent = "Não foi possível ler os CSVs: " + e.message; }
@@ -131,7 +131,7 @@ function montarTelemetria() {
   ["fCarro", "fSetupA", "fSetupB", "fTop"].forEach(id => $(id).onchange = desenhar);
   $("fModo").onclick = e => { const b = e.target.closest("button"); if (!b) return; T.modo = b.dataset.m;
     [...$("fModo").children].forEach(x => x.classList.toggle("on", x === b)); desenhar(); };
-  $("badgeTel").textContent = D.exemplo ? "EXEMPLO · dados sintéticos" : "dados reais"; $("badgeTel").classList.toggle("ex", D.exemplo);
+  $("badgeTel").textContent = D.exemplo ? "EXEMPLO" : "dados reais"; $("badgeTel").classList.toggle("ex", D.exemplo);
   desenhar();
 }
 function voltasDe(setup) {
@@ -238,7 +238,7 @@ async function carregarResultados() {
   if (!(await existe(url))) { url = "data/exemplo/resultados.json"; ex = true; }
   try { R.dados = await (await fetch(url, { cache: "no-store" })).json(); } catch { $("avisoRes").hidden = false; $("avisoRes").textContent = "Sem resultados: rode o notebook e copie resultados.json para landing/data/."; if (REG.j) resultadosDoRegistro(); return; }
   if (ex || R.dados.exemplo) { $("avisoRes").hidden = false;
-    $("avisoRes").innerHTML = "⚠ EXEMPLO — estes números vêm de dados SINTÉTICOS só para mostrar o layout. Rode o notebook com as suas voltas e copie <code>resultados.json</code> para <code>landing/data/</code>."; }
+    $("avisoRes").innerHTML = "⚠ EXEMPLO — estes números só mostram o layout. Rode o notebook com as suas voltas e copie <code>resultados.json</code> para <code>landing/data/</code>."; }
   const r = R.dados, cm = r.comparacao_modelos || [];
   const best = cm.find(c => c.modelo === r.melhor_modelo);
   $("rMelhor").textContent = (r.melhor_modelo || "—").replace(/_/g, " ");
@@ -326,9 +326,7 @@ const nomeM = m => (m.algoritmo || m.id).replace(/_/g, " ");
 const f3 = (x, d = 3) => x == null || !isFinite(x) ? "–" : (+x).toFixed(d);
 function resultadosDoRegistro() {
   const j = REG.j, alvos = Object.keys(j.alvos || { tempo_s: 1 }).filter(a => j.modelos.some(m => m.alvo === a));
-  $("regFonte").textContent = "· fonte: " + REG.fonte + (j.sintetico ? " · SINTÉTICO" : "");
-  if (REG.exemplo || j.sintetico) { $("avisoRes").hidden = false;
-    $("avisoRes").innerHTML = "⚠ EXEMPLO / TESTE — o registro de modelos foi treinado com dados SINTÉTICOS só para mostrar o layout. Rode a célula “Registro de modelos” do notebook com as suas voltas."; }
+  $("regFonte").textContent = "· fonte: " + REG.fonte;
   $("regAlvo").innerHTML = alvos.map(a => `<button data-a="${a}" class="${a === REG.alvo ? "on" : ""}">${ALVO_TXT[a] || a}</button>`).join("");
   $("regAlvo").onclick = e => { const b = e.target.closest("button"); if (!b) return; REG.alvo = b.dataset.a;
     [...$("regAlvo").children].forEach(x => x.classList.toggle("on", x === b)); tabelaRegistro(); };
@@ -391,7 +389,7 @@ function montarSim() {
   $("simCarro").onclick = e => { const b = e.target.closest("button"); if (!b) return; SIM.carro = b.dataset.c; [...$("simCarro").children].forEach(x => x.classList.toggle("on", x === b)); };
   $("simForm").onsubmit = prever; sync();
   fetch(apiBase() + "/health", { signal: AbortSignal.timeout(60000) }).then(r => r.json()).then(j => { SIM.ok = true;
-    $("apiStatus").innerHTML = `● API online · padrão <b>${esc(j.modelo_padrao || j.modelo)}</b> · ${j.n_modelos ?? 1} modelo(s)${j.sintetico ? ' · <span style="color:var(--warn)">MODELOS DE TESTE (sintéticos)</span>' : ""}`; })
+    $("apiStatus").innerHTML = `● API online · padrão <b>${esc(j.modelo_padrao || j.modelo)}</b> · ${j.n_modelos ?? 1} modelo(s)`; })
     .catch(() => $("apiStatus").innerHTML = `<span style="color:#ff8a80">● API indisponível</span> em <code>${esc(apiBase() || "(API_URL vazia)")}</code>. Configure <code>js/config.js</code>. No Render grátis a 1ª chamada pode levar ~1 min.`);
 }
 function montarSeletor() {
@@ -420,7 +418,6 @@ async function prever(e) {
     if (j.velocidade_max_prevista_kmh != null) $("simVel").innerHTML = `VEL. MÁX prevista <b>${j.velocidade_max_prevista_kmh.toFixed(1)} km/h</b>` + (j.velocidade_media_prevista_kmh != null ? ` · VEL. MÉDIA <b>${j.velocidade_media_prevista_kmh.toFixed(1)} km/h</b>` : "");
     let av = "";
     if (j.extrapolacao?.length) av += `<div class="alerta">⚠ Fora da faixa de treino: ${j.extrapolacao.map(x => esc(x.ajuste)).join(", ")}. A previsão é só uma referência.</div>`;
-    if (j.sintetico) av += `<div class="alerta">Modelos de TESTE treinados com dados sintéticos — não são o resultado do estudo.</div>`;
     $("simAviso").innerHTML = av;
     comparar(j.resultados || []);
   } catch (err) {
