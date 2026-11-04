@@ -471,7 +471,8 @@ const FAQ = [
   ["Quais modelos foram testados?", "Lasso, Ridge, ElasticNet, Random Forest, Extra Trees, Gradient Boosting, XGBoost e LightGBM — sempre comparados com o baseline (média pura) e com um modelo que só conhece o carro. A escolha é pelo menor MAE na validação cruzada por grupos, com busca de hiperparâmetros."],
   ["Dá para confiar na previsão do S10?", "Com cautela: o S10 tem vários ajustes fora da faixa vista no treino (extrapolação). O simulador avisa quando isso acontece."],
   ["Onde a IA foi usada?", "Para dúvidas de sintaxe e para sugerir o S10, que virou hipótese de teste. Todas as decisões de modelagem foram do grupo e estão justificadas no notebook."],
-  ["Como o deploy funciona?", "A página é estática (Vercel). O simulador chama uma API FastAPI que carrega o modelo treinado no notebook (.joblib) e devolve o tempo previsto."]];
+  ["Como o deploy funciona?", "A página é estática (Vercel). O simulador chama uma API FastAPI no Render. Os .joblib da API podem ser sintéticos; as métricas do artigo estão em github.com/andremarcelino-mp4/f1-ml-monaco."],
+  ["Por que não Time Trial, LSTM ou um fatorial completo?", "Time Trial apaga o efeito do carro. LSTM nas amostras responde outra pergunta. Um fatorial 2^18 não cabe num piloto. A seção 2.6 do artigo lista essas recusas."]];
 function montarFaqEquipe() {
   $("faq").innerHTML = FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("");
   $("team").innerHTML = (C.EQUIPE || []).map(([n, p, u]) => {
@@ -480,6 +481,7 @@ function montarFaqEquipe() {
     return `<${tag} class="card member"${extra}><div class="av">${esc(n.split(" ").map(s => s[0]).slice(0, 2).join(""))}</div><h3>${esc(n)}</h3><p class="muted">${esc(p)}</p></${tag}>`;
   }).join("");
   if (C.GITHUB) $("ghLink").href = C.GITHUB; else $("ghLink").style.display = "none";
+  if ($("ghLanding") && C.GITHUB_LANDING) $("ghLanding").href = C.GITHUB_LANDING;
   if (C.DASHBOARD) $("linkDash").href = C.DASHBOARD; else $("linkDash").style.display = "none";
 }
 

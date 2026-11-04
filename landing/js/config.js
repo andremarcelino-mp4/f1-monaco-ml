@@ -15,7 +15,8 @@ window.CONFIG = {
   MP4: "",           // ex.: "videos/volta_monaco.mp4"
 
   // Links
-  GITHUB: "https://github.com/andremarcelino-mp4/f1-monaco-ml",
+  GITHUB: "https://github.com/andremarcelino-mp4/f1-ml-monaco",
+  GITHUB_LANDING: "https://github.com/andremarcelino-mp4/f1-monaco-ml",
   DASHBOARD: "",     // ex.: "https://f1-monaco-dashboard.vercel.app"
 
   // Equipe (nome, papel, link opcional). Edite à vontade.
