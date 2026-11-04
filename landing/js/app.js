@@ -460,21 +460,8 @@ function comparar(L) {
       ${x.velocidade_max_modelo ? `<p class="mini">velocidade por: ${esc(x.velocidade_max_modelo)}</p>` : ""}</details></div>`; }).join("");
 }
 
-/* ---------- FAQ e equipe ---------- */
-const FAQ = [
-  ["Por que um jogo e não dados reais da F1?", "Dados reais de setup das equipes são secretos. No F1 23 controlamos tudo: mesmo piloto, pista, clima e combustível, mudando só o setup — é um experimento controlado."],
-  ["Por que mudar um ajuste por vez (S1–S9)?", "Se dois ajustes mudam juntos não dá para saber qual causou a diferença. O S10 (IA) muda vários de propósito, e por isso é tratado como teste à parte."],
-  ["Como vocês dividiram treino e teste?", "Por grupos (sessão/bloco), não por voltas aleatórias. Voltas seguidas do mesmo bloco são quase iguais; misturá-las entre treino e teste inflaria as métricas (vazamento)."],
-  ["O que é o ruído do piloto?", "A diferença entre o S0 do início e o S0 do fim de cada sessão. Um setup só é considerado melhor se ganhar mais que esse ruído e o teste de Welch der p < 0,05."],
-  ["Por que comparar com baselines?", "Um modelo só vale se superar a média (baseline) e o modelo que só conhece o carro. O placebo, com os setups embaralhados, mostra se o modelo aprendeu algo real."],
-  ["Por que a telemetria não entra no modelo do simulador?", "Velocidade, freio etc. só existem depois que a volta acontece. Usá-los para prever o tempo é vazamento; eles servem para explicar (trilha B), não para prever (trilha A)."],
-  ["Quais modelos foram testados?", "Lasso, Ridge, ElasticNet, Random Forest, Extra Trees, Gradient Boosting, XGBoost e LightGBM — sempre comparados com o baseline (média pura) e com um modelo que só conhece o carro. A escolha é pelo menor MAE na validação cruzada por grupos, com busca de hiperparâmetros."],
-  ["Dá para confiar na previsão do S10?", "Com cautela: o S10 tem vários ajustes fora da faixa vista no treino (extrapolação). O simulador avisa quando isso acontece."],
-  ["Onde a IA foi usada?", "Para dúvidas de sintaxe e para sugerir o S10, que virou hipótese de teste. Todas as decisões de modelagem foram do grupo e estão justificadas no notebook."],
-  ["Como o deploy funciona?", "A página é estática (Vercel). O simulador chama uma API FastAPI no Render. Os .joblib da API podem ser sintéticos; as métricas do artigo estão em github.com/andremarcelino-mp4/f1-ml-monaco."],
-  ["Por que não Time Trial, LSTM ou um fatorial completo?", "Time Trial apaga o efeito do carro. LSTM nas amostras responde outra pergunta. Um fatorial 2^18 não cabe num piloto. A seção 2.6 do artigo lista essas recusas."]];
+/* ---------- equipe ---------- */
 function montarFaqEquipe() {
-  $("faq").innerHTML = FAQ.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join("");
   $("team").innerHTML = (C.EQUIPE || []).map(([n, p, u]) => {
     const tag = u ? "a" : "div";
     const extra = u ? ` href="${esc(u)}" target="_blank" rel="noopener" aria-label="${esc(n)} no LinkedIn"` : "";

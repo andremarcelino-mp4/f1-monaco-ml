@@ -13,15 +13,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 <script src="js/config.js" defer></script>
 <script src="js/app.js" defer></script>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
-<script type="module" src="js/teardown.js"></script>
 </head>
 <body>
 <header class="nav">
   <a class="logo" href="#topo"><span class="logo-mark">EV</span><span>ENGENHEIRO<b>VIRTUAL</b></span></a>
   <nav id="menu">
     <a href="#experimento">Experimento</a><a href="#captura">Captura</a><a href="#telemetria">Telemetria</a>
-    <a href="#resultados">Resultados</a><a href="#garage">Garage</a><!-- <a href="#videos">Vídeos</a> --><a href="#metodologia">Metodologia</a>
+    <a href="#resultados">Resultados</a><!-- <a href="#videos">Vídeos</a> --><a href="#metodologia">Metodologia</a>
     <a class="btn-nav" href="#simulador">Simulador</a>
   </nav>
   <button class="burger" aria-label="menu" onclick="document.body.classList.toggle('menu-on')"><i></i><i></i><i></i></button>
@@ -221,46 +219,22 @@ python capturar_telemetria.py --carro ferrari --setup S10 --sessao 5 --saida dad
   </div>
 </section>
 
-<!-- GARAGE / TEARDOWN -->
-<section id="garage" class="sec dark2">
+<!-- METODOLOGIA -->
+<section id="metodologia" class="sec dark2">
   <div class="wrap">
-    <div class="sec-head"><span class="num">07</span><div><p class="kicker">Garage · teardown</p><h2 class="big">Ferrari<br>desmontada</h2></div></div>
-    <p class="lead garage-lead">Não é um F1 2026 nem a unidade de potência. É o mapa do acerto do estudo: cada peça é um parâmetro que o piloto mexeu em Mônaco no F1 23. A cor segue o consenso de importância em <code>importancias.csv</code>. Motor e ERS ficam cinza — fora do desenho experimental.</p>
-    <div class="garage-grid">
-      <div class="garage-stage">
-        <canvas id="tdCanvas" aria-label="Ferrari F1 23 em vista explodida"></canvas>
-        <label class="garage-explode">Desmonte <input type="range" id="tdExplode" min="0" max="100" value="72"></label>
-      </div>
-      <aside class="garage-panel card" id="tdPanel">
-        <p class="tag" id="tdIndex">01</p>
-        <h3 id="tdNome">Diferencial s/ acel.</h3>
-        <p class="mono mini" id="tdSpec">consenso 26,0% · S0 53 → S10 50</p>
-        <p id="tdTexto">Clique numa peça. O ranking não é tempo ganho: o MAE do estudo (~1 s) ainda é da ordem do ruído do piloto (~1,26 s).</p>
-        <ol class="td-list" id="tdList"></ol>
-      </aside>
-    </div>
-    <p class="mini">Vista explodida no eixo vertical (topo primeiro), labels numa coluna, câmera sem corte — receita da skill teardown. Modelo procedural ilustrativo, sem CAD oficial da Ferrari.</p>
-  </div>
-</section>
-
-<!-- METODOLOGIA / FAQ -->
-<section id="metodologia" class="sec">
-  <div class="wrap">
-    <div class="sec-head"><span class="num">08</span><div><p class="kicker">Metodologia</p><h2 class="big">O desenho<br>e o que ficou de fora</h2></div></div>
+    <div class="sec-head"><span class="num">07</span><div><p class="kicker">Metodologia</p><h2 class="big">O desenho<br>e o que ficou de fora</h2></div></div>
     <div class="meth-prose reveal">
       <p>O pipeline é curto de propósito. Pacotes UDP na porta 20777 viram <code>voltas.csv</code> (uma linha por volta) e <code>amostras.csv</code> (~20 Hz). As sessões foram Grande Prêmio, treino livre, pista seca, desempenho real dos carros. S0 é a base; S1 a S9 mudam um fator; S10 muda vários de uma vez. A modelagem usa 273 voltas de Ferrari e Alfa, 24 preditores decididos <em>antes</em> da volta, GroupKFold por sessão e um consenso de seis importâncias.</p>
       <p>Outras ideias existiram e foram recusadas: Time Trial (apagaria o efeito do carro, ~15% da importância); fatorial nos 18 parâmetros (inviável com um piloto); jogar fora flashback/saída/box (a amostra já é pequena); KFold aleatório (vaza sessão); usar velocidade no túnel para prever o tempo (vazamento); só árvores ou só MLP (~270 linhas); LSTM nas amostras (outra pergunta); um único ranking de impureza.</p>
       <p class="mini">Texto completo: <a href="https://github.com/andremarcelino-mp4/f1-ml-monaco/blob/main/artigo/ARTIGO_ABNT_ENGENHEIRO_CORRIDA_VIRTUAL.md" target="_blank" rel="noopener">artigo ABNT, seção 2.6</a>.</p>
     </div>
-    <h3 class="faq-title">Perguntas da banca</h3>
-    <div class="faq reveal" id="faq"></div>
   </div>
 </section>
 
 <!-- EQUIPE -->
 <section id="equipe" class="sec">
   <div class="wrap">
-    <div class="sec-head"><span class="num">09</span><div><p class="kicker">Equipe</p><h2 class="big">Box crew</h2></div></div>
+    <div class="sec-head"><span class="num">08</span><div><p class="kicker">Equipe</p><h2 class="big">Box crew</h2></div></div>
     <div class="team reveal" id="team"></div>
   </div>
 </section>
